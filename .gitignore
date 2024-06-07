@@ -1,3 +1,15 @@
+ins
+.history
+**/node_modules
+/workspace
+
+# 오피스 임시파일
+~$*
+
+# macOS
+.DS_Store
+
+
 # Logs
 logs
 *.log
