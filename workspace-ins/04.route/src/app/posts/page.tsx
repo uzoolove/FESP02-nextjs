@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 
 
 export default function PostsPage() {
+  console.log('app/posts/page');
   return (
     <h1 className="text-xl font-bold mb-4">목록 조회</h1>
   );
