@@ -242,3 +242,729 @@ export default function RootPage() {
 
 ### 테스트
 * http://localhost:3000 접속 테스트
+
+### 게시물 목록 조회 페이지
+* src/app/[type]/page.tsx 작성
+  ```tsx
+  export default function Page() {
+    return (
+      ...
+    );
+  }
+  ```
+
+* src/app/[type]/index.html 복사해서 return 영역 작성
+  - ```<main>``` 영역 복사
+  - JSX 문법에 맞춰서 수정
+    + class -> className
+
+```tsx
+export default function Page() {
+  return (
+    <main className="min-w-80 p-10">
+      <div className="text-center py-4">
+        <h2 className="pb-4 text-2xl font-bold text-gray-700 dark:text-gray-200">정보 공유</h2>
+      </div>
+      <div className="flex justify-end mr-4">
+        
+        <form action="#">
+          <input
+            className="dark:bg-gray-600 bg-gray-100 p-1 rounded"
+            type="text"
+            name="keyword"
+          />
+          <button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">검색</button>
+        </form>
+
+        <a href="/info/new" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">글작성</a>
+      </div>
+      <section className="pt-10">
+        <table className="border-collapse w-full table-fixed">
+          <colgroup>
+            <col className="w-[10%] sm:w-[10%]" />
+            <col className="w-[60%] sm:w-[30%]" />
+            <col className="w-[30%] sm:w-[15%]" />
+            <col className="w-0 sm:w-[10%]" />
+            <col className="w-0 sm:w-[10%]" />
+            <col className="w-0 sm:w-[25%]" />
+          </colgroup>
+          <thead>
+            <tr className="border-b border-solid border-gray-600">
+              <th className="p-2 whitespace-nowrap font-semibold">번호</th>
+              <th className="p-2 whitespace-nowrap font-semibold">제목</th>
+              <th className="p-2 whitespace-nowrap font-semibold">글쓴이</th>
+              <th className="p-2 whitespace-nowrap font-semibold hidden sm:table-cell">조회수</th>
+              <th className="p-2 whitespace-nowrap font-semibold hidden sm:table-cell">댓글수</th>
+              <th className="p-2 whitespace-nowrap font-semibold hidden sm:table-cell">작성일</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr className="border-b border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300 ease-in-out">
+              <td className="p-2 text-center">2</td>
+              <td className="p-2 truncate indent-4"><a href="/info/2" className="cursor-pointer">안녕하세요.</a></td>
+              <td className="p-2 text-center truncate">용쌤</td>
+              <td className="p-2 text-center hidden sm:table-cell">29</td>
+              <td className="p-2 text-center hidden sm:table-cell">2</td>
+              <td className="p-2 truncate text-center hidden sm:table-cell">2024.07.05 13:39:23</td>
+            </tr>
+            <tr className="border-b border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300 ease-in-out">
+              <td className="p-2 text-center">1</td>
+              <td className="p-2 truncate indent-4"><a href="/info/1" className="cursor-pointer">좋은 소식이 있습니다.</a></td>
+              <td className="p-2 text-center truncate">제이지</td>
+              <td className="p-2 text-center hidden sm:table-cell">22</td>
+              <td className="p-2 text-center hidden sm:table-cell">5</td>
+              <td className="p-2 truncate text-center hidden sm:table-cell">2024.07.03 17:59:13</td>
+            </tr>
+          </tbody>
+        </table>
+        <hr />
+
+        <div>
+          <ul className="flex justify-center gap-3 m-4">
+            <li className="font-bold text-blue-700">
+              <a href="/info?page=1">1</a>
+            </li>
+            <li>
+              <a href="/info?page=2">2</a>
+            </li>
+          </ul>
+        </div>
+
+      </section>
+    </main>
+  );
+}
+```
+
+### 게시물 상세 조회 페이지
+* src/app/[type]/[id]/page.tsx 작성
+  ```tsx
+  export default function Page() {
+    return (
+      ...
+    );
+  }
+  ```
+
+* src/app/[type]/[id]/index.html 복사해서 return 영역 작성
+  - ```<main>``` 영역 복사
+  - JSX 문법에 맞춰서 수정
+    + class -> className
+    + rows, cols -> number 타입에 맟춰서 작성
+
+```tsx
+export default function Page() {
+  return (
+    <main className="container mx-auto mt-4 px-4">
+
+      <section className="mb-8 p-4">
+        <form action="/info">
+        <div className="font-semibold text-xl">제목 : 좋은 소식이 있습니다.</div>
+          <div className="text-right text-gray-400">작성자 : 제이지</div>
+          <div className="mb-4">
+            <div>
+              <pre className="font-roboto w-full p-2 whitespace-pre-wrap">좋은 소식을 가지고 왔습니다.<br />오늘 드디어 최종 면접을 합니다.<br />많이 응원해 주세요^^</pre>
+            </div>
+            <hr/>
+          </div>
+          <div className="flex justify-end my-4">
+            <a href="/info" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">목록</a>
+            <a href="/info/1/edit" className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">수정</a>
+            <button type="submit" className="bg-red-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">삭제</button>
+          </div>
+        </form>
+      </section>
+
+      <section className="mb-8">
+        <h4 className="mt-8 mb-4 ml-2">댓글 2개</h4>
+
+        <div className="shadow-md rounded-lg p-4 mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <img
+              className="w-8 mr-2 rounded-full"
+              src="https://api.fesp.shop/files/00-sample/user-apeach.webp"
+              alt="어피치 프로필 이미지"
+            />
+            <a href="" className="text-orange-400">어피치</a>
+            <time className="ml-auto text-gray-500" dateTime="2024.07.02 14:11:22">2024.07.02 14:11:22</time>
+          </div>
+          <div className="flex justify-between items-center mb-2">
+            <form action="#">
+              <pre className="whitespace-pre-wrap text-sm">화이팅!</pre>
+              <button type="submit" className="bg-red-500 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">삭제</button>
+            </form>
+          </div>
+        </div>
+
+        <div className="shadow-md rounded-lg p-4 mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <img
+              className="w-8 mr-2 rounded-full"
+              src="https://api.fesp.shop/files/00-sample/user-muzi.webp"
+              alt="무지 프로필 이미지"
+            />
+            <a href="" className="text-orange-400">무지</a>
+            <time className="ml-auto text-gray-500" dateTime="2024.07.07 12:34:56">2024.07.07 12:34:56</time>
+          </div>
+          <div className="flex justify-between items-center mb-2">
+            <form action="#">
+              <pre className="whitespace-pre-wrap text-sm">축하해요~~~</pre>
+              <button type="submit" className="bg-red-500 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">삭제</button>
+            </form>
+          </div>  
+        </div>
+
+        <div className="p-4 border border-gray-200 rounded-lg">
+          <h4 className="mb-4">새로운 댓글을 추가하세요.</h4>
+          <form action="#">
+            <div className="mb-4">
+              <textarea
+                rows={3}
+                cols={40}
+                className="block p-2 w-full text-sm border rounded-lg border-gray-300 bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                placeholder="내용을 입력하세요."
+                name="comment"></textarea>
+    
+              <p className="ml-2 mt-1 text-sm text-red-500">
+                내용은 필수입니다.
+              </p>
+              
+            </div>
+            <button type="submit" className="bg-orange-500 py-1 px-4 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">댓글 등록</button>
+          </form>
+        </div>
+
+      </section>
+    </main>
+  );
+}
+```
+
+### 게시물 등록 페이지
+* src/app/[type]/new/page.tsx 작성
+  ```tsx
+  export default function Page() {
+    return (
+      ...
+    );
+  }
+  ```
+
+* src/app/[type]/new/index.html 복사해서 return 영역 작성
+  - ```<main>``` 영역 복사
+  - JSX 문법에 맞춰서 수정
+    + class -> className
+    + for -> htmlFor
+    + rows, cols -> number 타입에 맟춰서 작성
+
+```tsx
+export default function Page() {
+  return (
+    <main className="min-w-[320px] p-4">
+      <div className="text-center py-4">
+        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-200">게시글 등록</h2>
+      </div>
+      <section className="mb-8 p-4">
+        <form action="/info/1">
+          <div className="my-4">
+            <label className="block text-lg content-center" htmlFor="title">제목</label>
+            <input
+              id="title"
+              type="text"
+              placeholder="제목을 입력하세요." 
+              className="w-full py-2 px-4 border rounded-md dark:bg-gray-700 border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              name="title"
+            />
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">제목은 필수입니다.</p>
+          </div>
+          <div className="my-4">
+            <label className="block text-lg content-center" htmlFor="content">내용</label>
+            <textarea 
+              id="content"
+              rows={15} 
+              placeholder="내용을 입력하세요."
+              className="w-full p-4 text-sm border rounded-lg border-gray-300 bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              name="content"
+            ></textarea>
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">내용은 필수입니다.</p>
+          </div>
+          <hr />
+          <div className="flex justify-end my-6">
+            <button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">등록</button>
+            <a href="/info" className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">취소</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  );
+}
+```
+
+### 게시물 수정 페이지
+* src/app/[type]/[id]/edit/page.tsx 작성
+  ```tsx
+  export default function Page() {
+    return (
+      ...
+    );
+  }
+  ```
+
+* src/app/[type]/[id]/edit/index.html 복사해서 return 영역 작성
+  - ```<main>``` 영역 복사
+  - JSX 문법에 맞춰서 수정
+    + class -> className
+    + for -> htmlFor
+    + rows, cols -> number 타입에 맟춰서 작성
+    + value -> defaultValue
+    + ```<textarea>...</textarea>``` -> ```<textarea defaultValue={`...`}></textarea>```
+
+```tsx
+export default function Page() {
+  return (
+    <main className="min-w-[320px] p-4">
+      <div className="text-center py-4">
+        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-200">게시글 수정</h2>
+      </div>
+      <section className="mb-8 p-4">
+        <form action="/info/1">
+          <div className="my-4">
+            <label className="block text-lg content-center" htmlFor="title">제목</label>
+            <input
+              id="title"
+              type="text"
+              placeholder="제목을 입력하세요." 
+              className="w-full py-2 px-4 border rounded-md dark:bg-gray-700 border-gray-300 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              name="title"
+              defaultValue="좋은 소식이 있습니다."
+            />
+
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">제목은 필수 입니다.</p>
+          </div>
+          <div className="my-4">
+            <label className="block text-lg content-center" htmlFor="content">내용</label>
+            <textarea 
+              id="content"
+              rows={15} 
+              placeholder="내용을 입력하세요."
+              className="w-full p-4 text-sm border rounded-lg border-gray-300 bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+              name="content"
+              defaultValue={`좋은 소식을 가지고 왔습니다.
+오늘 드디어 최종 면접을 합니다.
+많이 응원해 주세요^^`}
+            ></textarea>
+
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">내용은 필수입니다.</p>
+          </div>
+          <hr />
+          <div className="flex justify-end my-6">
+            <button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">수정</button>
+            <a href="/info/1" className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">취소</a>
+          </div>
+        </form>
+      </section>
+    </main>
+  );
+}
+```
+
+### 회원가입 페이지
+* src/app/user/signup/page.tsx 작성
+  ```tsx
+  export default function Page() {
+    return (
+      ...
+    );
+  }
+  ```
+
+* src/app/user/signup/index.html 복사해서 return 영역 작성
+  - ```<main>``` 영역 복사
+  - JSX 문법에 맞춰서 수정
+    + class -> className
+    + for -> htmlFor
+
+```tsx
+export default function Page() {
+  return (
+    <main className="min-w-80 flex-grow flex items-center justify-center">
+      <div className="p-8 border border-gray-200 rounded-lg w-full max-w-md dark:bg-gray-600 dark:border-0">
+        <div className="text-center py-4">
+          <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-200">회원 가입</h2>
+        </div>
+
+        <form action="/">
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="name">이름</label>
+            <input
+              type="text"
+              id="name"
+              placeholder="이름을 입력하세요"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-orange-400 dark:bg-gray-700"
+              name="name"
+            />
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">이름은 필수입니다.</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="email">이메일</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="이메일을 입력하세요"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-orange-400 dark:bg-gray-700"
+              name="email"
+            />
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">이메일은 필수입니다.</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="password">비밀번호</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="비밀번호를 입력하세요"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-orange-400 dark:bg-gray-700"
+              name="password"
+            />
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">비밀번호는 필수입니다.</p>
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="attach">프로필 이미지</label>
+            <input
+              type="file"
+              id="attach"
+              accept="image/*"
+              placeholder="이미지를 선택하세요"
+              className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700"
+              name="attach"
+            />
+          </div>
+
+          <div className="mt-10 flex justify-center items-center">
+            <button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">회원가입</button>
+            <a href="/" className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">취소</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  );
+}
+```
+
+### 로그인 페이지
+* src/app/user/login/page.tsx 작성
+  ```tsx
+  export default function Page() {
+    return (
+      ...
+    );
+  }
+  ```
+
+* src/app/login/index.html 복사해서 return 영역 작성
+  - ```<main>``` 영역 복사
+  - JSX 문법에 맞춰서 수정
+    + class -> className
+    + for -> htmlFor
+
+```tsx
+export default function Page() {
+  return (
+    <main className="min-w-80 flex-grow flex items-center justify-center">
+      <div className="p-8 border border-gray-200 rounded-lg w-full max-w-md dark:bg-gray-600 dark:border-0">
+        <div className="text-center py-4">
+          <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-200">로그인</h2>
+        </div>
+
+        <form action="/">
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="email">이메일</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="이메일을 입력하세요"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-orange-400 dark:bg-gray-700"
+              name="email"
+            />
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">이메일은 필수입니다.</p>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="password">비밀번호</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="비밀번호를 입력하세요"
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-orange-400 dark:bg-gray-700"
+              name="password"
+            />
+            <p className="ml-2 mt-1 text-sm text-red-500 dark:text-red-400">비밀번호는 필수입니다.</p>
+            <a href="#" className="block mt-6 ml-auto text-gray-500 text-sm dark:text-gray-300 hover:underline">비밀번호를 잊으셨나요?</a>
+          </div>
+          <div className="mt-10 flex justify-center items-center">
+            <button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">로그인</button>
+            <a href="/user/signup" className="ml-8 text-gray-800 hover:underline">회원가입</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  );
+}
+```
+
+### 테스트
+* http://localhost:3000 접속 테스트
+
+## ```<a>``` 태그 ```<Link>```로 수정
+### Root Layout 
+* app/layout.tsx
+  ```tsx
+  import Link from 'next/link';
+  ...
+  <Link href="/" className="flex items-center gap-2">
+    <img className="mr-3 h-6 sm:h-9" src="/images/favicon.svg" width="40" height="40" alt="로고 이미지" />
+    <span className="text-lg font-bold">멋사컴</span>
+  </Link>
+  ...
+  <li className="hover:text-amber-500 hover:font-semibold"><Link href="/info">정보공유</Link></li>
+  <li className="hover:text-amber-500 hover:font-semibold"><Link href="/free">자유게시판</Link></li>
+  <li className="hover:text-amber-500 a:font-semibold"><Link href="/qna">질문게시판</Link></li>
+  ...
+  <div className="flex justify-end">
+    <Link href="/user/login" className="bg-orange-500 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">로그인</Link>
+    <Link href="/user/signup" className="bg-gray-900 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">회원가입</Link>
+  </div>
+  ...
+  ```
+
+### Root Page
+* app/page.tsx
+  ```tsx
+  import Link from 'next/link';
+  ...
+  <Link href="/" className="bg-orange-500 text-white px-6 py-3 rounded hover:bg-orange-600">커뮤니티 참여하기</Link>
+  ...
+  <Link href="/info" className="text-orange-500 hover:underline">바로가기</Link>
+  ...
+  <Link href="/free" className="text-orange-500 hover:underline">바로가기</Link>
+  ...
+  <Link href="/qna" className="text-orange-500 hover:underline">바로가기</Link>
+  ...
+  ```
+
+### 게시물 목록 조회 페이지
+* app/[type]/page.tsx
+  ```tsx
+  import Link from 'next/link';
+  export default function Page({ params }: { params: { type: string } }) {
+    return (
+      ...
+      <Link href={`/${params.type}/new`} className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">글작성</Link>
+      ...
+      <td className="p-2 truncate indent-4"><Link href={`/${params.type}/2`} className="cursor-pointer">안녕하세요.</Link></td>
+      ...
+      <td className="p-2 truncate indent-4"><Link href={`/${params.type}/1`} className="cursor-pointer">좋은 소식이 있습니다.</Link></td>
+      ...
+      <Link href={`/${params.type}?page=1`}>1</Link>
+      ...
+      <Link href={`/${params.type}?page=2`}>2</Link>
+      ...
+    );
+  }
+  ```
+
+### 게시물 상세 조회 페이지
+* app/[type]/[id]/page.tsx
+  ```tsx
+  import Link from "next/link";
+  export default function Page({ params }: { params: { type: string, id: string } }) {
+    return (
+      ...
+      <form action={`/${params.type}`}>
+      ...
+      ...
+      <Link href={`/${params.type}`} className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">목록</Link>
+      <Link href={`/${params.type}/${params.id}/edit`} className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">수정</Link>
+      ...
+      <Link href="" className="text-orange-400">어피치</Link>
+      ...
+      <Link href="" className="text-orange-400">무지</Link>
+      ...
+    );
+  }
+  ```
+
+### 게시물 등록 페이지
+* app/[type]/new/page.tsx
+  ```tsx
+  import Link from "next/link";
+  export default function Page({ params }: { params: { type: string } }) {
+    return (
+      ...
+      <form action={`/${params.type}/1`}>
+      ...
+      <Link href={`/${params.type}`} className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">취소</Link>
+      ...
+    );
+  }
+  ```
+
+### 게시물 수정 페이지
+* app/[type]/[id]/edit/page.tsx
+  ```tsx
+  import Link from "next/link";
+  export default function Page({ params }: { params: { type: string, id: string } }) {
+    return (
+      ...
+      <form action={`/${params.type}/${params.id}`}>
+      ...
+      <Link href={`/${params.type}/${params.id}`} className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">취소</Link>
+      ...
+    );
+  }
+  ```
+
+### 회원가입 페이지
+* app/user/signup/page.tsx
+  ```tsx
+  import Link from "next/link";
+  ...
+  <Link href="/" className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">취소</Link>
+  ...
+  ```
+
+### 로그인 페이지
+* app/user/login/page.tsx
+  ```tsx
+  import Link from "next/link";
+  ...
+  <Link href="#" className="block mt-6 ml-auto text-gray-500 text-sm dark:text-gray-300 hover:underline">비밀번호를 잊으셨나요?</Link>
+  ...
+  <Link href="/user/signup" className="ml-8 text-gray-800 hover:underline">회원가입</Link>
+  ...
+  ```
+
+## page에 메타데이터 추가
+### Root Layout
+* app/layout.tsx 수정
+
+  ```tsx
+  export const metadata: Metadata = {
+    // url 관련 metadata 설정시 사용될 기본 경로 지정
+    metadataBase: new URL('https://next.fesp.shop'),
+  };
+  ```
+
+### 게시물 목록 조회 페이지
+* src/app/[type]/index.html 참고해서 src/app/[type]/page.tsx에 추가
+  ```tsx
+  import { Metadata } from "next";
+
+  export function generateMetadata({ params }: { params: { type: string } }): Metadata{
+    const boardName = params.type;
+    return {
+      title: `${boardName} - 멋사컴`,
+      description: `${boardName} 게시판입니다.`,
+      openGraph: {
+        title: `${boardName} - 멋사컴`,
+        description: `${boardName} 게시판입니다.`,
+        url: `/${params.type}`,
+        images: {
+          url: '/images/fesp.webp'
+        }
+      }
+    };
+  }
+  ...
+  ```
+
+### 게시물 상세 조회 페이지
+* src/app/[type]/[id]/index.html 참고해서 src/app/[type]/[id]/page.tsx에 추가
+  ```tsx
+  import { Metadata } from "next";
+  export function generateMetadata({ params }: { params: { type: string, id: string } }): Metadata {
+    const boardName = params.type;
+    return {
+      title: `${boardName} - 좋은 소식이 있습니다.`,
+      description: `${boardName} - 좋은 소식을 가지고 왔습니다. 오늘 드디어...`,
+      openGraph: {
+        title: `${boardName} - 좋은 소식이 있습니다.`,
+        description: `${boardName} - 좋은 소식을 가지고 왔습니다. 오늘 드디어...`,
+        url: `/${params.type}/${params.id}`
+      }
+    };
+  }
+  ...
+  ```
+
+### 게시물 등록 페이지
+* src/app/[type]/new/index.html 참고해서 src/app/[type]/new/page.tsx에 추가
+  ```tsx
+  import { Metadata } from "next";
+  export function generateMetadata({ params }: { params: { type: string } }): Metadata {
+    const boardName = params.type;
+    return {
+      title: `${boardName} - 게시글 등록`,
+      description: `${boardName} - 게시글을 등록하세요.`,
+      openGraph: {
+        title: `${boardName} - 게시글 등록`,
+        description: `${boardName} - 게시글을 등록하세요.`,
+        url: `/${params.type}/new`
+      }
+    };
+  }
+  ...
+  ```
+
+### 게시물 수정 페이지
+* src/app/[type]/[id]/edit/index.html 참고해서 src/app/[type]/[id]/edit/page.tsx에 추가
+  ```tsx
+  import { Metadata } from "next";
+  export function generateMetadata({ params }: { params: { type: string, id: string } }): Metadata {
+    const boardName = params.type;
+    return {
+      title: `${boardName} - 게시글 수정`,
+      description: `${boardName} - 게시글을 수정하세요.`,
+      openGraph: {
+        title: `${boardName} - 게시글 수정`,
+        description: `${boardName} - 게시글을 수정하세요.`,
+        url: `/${params.type}/${params.id}/edit`
+      }
+    };
+  }
+  ...
+  ```
+
+### 회원가입 페이지
+* src/app/user/signup/index.html 참고해서 src/app/user/signup/page.tsx에 추가
+  ```tsx
+  import { Metadata } from "next";
+  export const metadata: Metadata = {
+    title: '회원 가입 - 멋사컴',
+    openGraph: {
+      title: '회원 가입 - 멋사컴',
+      description: '무료 회원 가입후 멋사컴의 모든 서비스를 이용하세요.',
+      url: '/user/signup'
+    }
+  }
+  ...
+  ```
+
+### 로그인 페이지
+* src/app/user/login/index.html 참고해서 src/app/user/login/page.tsx에 추가
+  ```tsx
+  import { Metadata } from "next";
+  export const metadata: Metadata = {
+    title: '로그인 - 멋사컴',
+    openGraph: {
+      title: '로그인 - 멋사컴',
+      description: '로그인 페이지',
+      url: '/user/login'
+    }
+  }
+  ...
+  ```
+
+## 파일 정리
+* app 하위의 모든 index.html 삭제
+
