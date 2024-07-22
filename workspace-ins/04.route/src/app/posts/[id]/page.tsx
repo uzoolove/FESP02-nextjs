@@ -5,10 +5,18 @@ import { Metadata } from "next";
 //   description: '3번 게시물 상세정보'
 // };
 
-export function generateMetadata({ params }: { params: { id: string } }){
+export function generateMetadata({ params }: { params: { id: string } }): Metadata{
   return {
     title: `${params.id}번 게시물`,
-    description: `${params.id}번 게시물 상세정보`
+    description: `${params.id}번 게시물 상세정보`,
+    openGraph: {
+      title: `${params.id}번 게시물`,
+      description: `${params.id}번 게시물 상세정보`,
+      images: {
+        url: '/images/fesp.webp'
+      },
+      url: `https://community.fesp.shop/info/${params.id}`
+    }
   };
 }
 
