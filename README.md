@@ -102,6 +102,7 @@ npx create-next-app@latest
 
 ### 개발 서버 실행
 ```sh
+cd 02.cna
 npm run dev
 ```
 
