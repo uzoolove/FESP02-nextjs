@@ -20,7 +20,9 @@
 ### package.json 파일 작성
 * 생성
   ```sh
+  cd workspace
   mkdir 01.manual
+  cd 01.manual
   npm init -y
   ```
 
