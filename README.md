@@ -33,7 +33,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
-  }
+  },
   ```
   - dev: 개발 서버 실행
   - build: 프로덕션 빌드
@@ -78,6 +78,7 @@ npm install next@latest react@latest react-dom@latest
 
 ### 개발 서버 실행
 ```sh
+cd 02.cna
 npm run dev
 ```
   * Next.js 프로젝트를 위한 tsconfig.json, next-env.d.ts 파일이 자동으로 생성됨
