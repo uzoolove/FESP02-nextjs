@@ -20,6 +20,17 @@ export function generateMetadata({ params }: { params: { id: string } }): Metada
   };
 }
 
+// 이 함수가 반환한 배열만큼 SSG 페이지를 미리 생성
+// 빌드하면 .next/server/app/posts/1.html, 2.html, 4.html
+export async function generateStaticParams(){
+  // params 배열 반환
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '4' },
+  ];
+}
+
 export default function Page({ params }: { params: { id: string } }) {
   console.log(params.id);
   if(params.id === '3'){
