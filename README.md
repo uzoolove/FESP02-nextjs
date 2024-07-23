@@ -766,12 +766,12 @@ import { Button } from '@/components/button'
 
 * 동적 경로를 사용해서 특정 게시글에 달린 좋아요 목록, 관심글로 등록한 목록과 좋아요 상세정보, 관심글 상세 정보를 보여줄 때 만들어야 할 파일
   - app/posts/[pid]/[slug]/page.js
-    + /posts/1/likes -> { pid: '1', slug: ['likes'] }
-    + /posts/2/likes -> { pid: '2', slug: ['likes'] }
-    + /posts/2/favorites -> { pid: '1', slug: ['favorites'] }
+    + /posts/1/likes -> { pid: '1', slug: 'likes' }
+    + /posts/2/likes -> { pid: '2', slug: 'likes' }
+    + /posts/2/favorites -> { pid: '2', slug: 'favorites' }
   - app/posts/[pid]/[slug]/[sid]/page.js
-    + /posts/3/likes/4 -> { pid: '3', slug: ['likes'], sid: '4' }
-    + /posts/3/favorites/4 -> { pid: '3', slug: ['favorites'], sid: '4' }
+    + /posts/3/likes/4 -> { pid: '3', slug: 'likes', sid: '4' }
+    + /posts/3/favorites/4 -> { pid: '3', slug: 'favorites', sid: '4' }
 
 ### generateStaticParams() 함수
 * 동적 경로로 구성된 페이지의 params를 미리 지정해서 빌드시 해당 파라미터를 가지는 페이지를 정적으로 생성

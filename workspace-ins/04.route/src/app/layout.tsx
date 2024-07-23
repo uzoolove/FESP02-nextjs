@@ -20,6 +20,8 @@ export default function RootLayout({
               <li><Link href="/" className={`hover:underline ${ isActive('/') }`}>Home</Link></li>
               <li><Link href="/about" className={`hover:underline ${ isActive('/about') }`}>About</Link></li>
               <li><Link href="/posts" className={`hover:underline ${ isActive('/posts') }`}>게시판</Link></li>
+              <li><Link href="/login" className={`hover:underline ${ isActive('/login') }`}>로그인</Link></li>
+              <li><Link href="/signup" className={`hover:underline ${ isActive('/signup') }`}>회원가입</Link></li>
             </ul>
           </nav>
         </header>

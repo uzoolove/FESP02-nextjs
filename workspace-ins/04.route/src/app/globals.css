@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  h1 {
+    @apply text-2xl font-bold text-gray-800 m-4
+  }
+  h2 {
+    @apply text-xl font-semibold text-gray-700 m-3
+  }
+  h3 {
+    @apply text-lg text-gray-600 m-2
+  }
+}
+
 @layer components {
   .cs-active {
     @apply font-bold;
