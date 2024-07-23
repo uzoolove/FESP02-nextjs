@@ -431,7 +431,8 @@ npm run dev
   import { useRouter, redirect } from "next/navigation"
   export default function Page(){
     const router = useRouter();
-    redirect('/login');
+    const isLogin = false;
+    if(!isLOgin) redirect('/login');
     return (
       <>
         <h1>글쓰기</h1>
@@ -461,8 +462,8 @@ npm run dev
       return [
         // Basic redirect
         {
-          source: '/about',
-          destination: '/',
+          source: '/about-us',
+          destination: '/about',
           permanent: true,
         },
         // Wildcard path matching
@@ -559,7 +560,7 @@ npm run dev
   </Suspense>
   ```
 
-* app/posts/paage.tsx 수정
+* app/posts/page.tsx 수정
   ```tsx
   export default async function Page(){
     await new Promise(resolve => setTimeout(resolve, 1000*3));
@@ -571,21 +572,21 @@ npm run dev
 
 ### 서스펜스를 이용한 스트리밍
 * SSR을 사용하면 서버에서 페이지에 필요한 모든 데이터를 생성한 후 완성된 HTML을 전송하는데 까지 시간이 오래걸림
-* <Suspense>를 통해 스트리밍을 활성화하면 서버에서 레이아웃이나 중요 데이터를 먼저 전송할 수 있으며 클라이언트는 페이지의 일부를 더 빨리 표시할 수 있음
+* ```<Suspense>```를 통해 스트리밍을 활성화하면 서버에서 레이아웃이나 중요 데이터를 먼저 전송할 수 있으며 클라이언트는 페이지의 일부를 더 빨리 표시할 수 있음
   - 하나의 response로 나머지 데이터도 이어서 받음
 
 ### SEO
 * generateMetadata 함수는 페이지의 메타데이터를 생성하는 데 사용됨
-* 메타데이터는 주로 <head> 태그 내에 포함되는 title, description, keyword 등의 정보
+* 메타데이터는 주로 ```<head>``` 태그 내에 포함되는 title, description, keyword 등의 정보
 * 메타데이터는 SEO(검색 엔진 최적화)에 중요한 역할을 하며, 소셜 미디어 공유 시에도 사용됨
 * generateMetadata 함수 내에서 데이터를 fetching하는 경우, Next.js는 이 데이터 fetching이 완료될 때까지 기다림
-* 데이터 fetching이 완료된 후 메타데이터를 최종적으로 생성하고, 이 메타데이터를 포함한 <head> 태그를 클라이언트로 스트리밍하기 시작
-* 클라이언트는 서버로부터 받은 초기 컨텐츠가 <head>를 포함하고 있기 때문에 검색엔진이 자바스크립트를 실행하지 않아도 완전한 메타데이터 확인 가능
+* 데이터 fetching이 완료된 후 메타데이터를 최종적으로 생성하고, 이 메타데이터를 포함한 ```<head>``` 태그를 클라이언트로 스트리밍하기 시작
+* 클라이언트는 서버로부터 받은 초기 컨텐츠가 ```<head>```를 포함하고 있기 때문에 검색엔진이 자바스크립트를 실행하지 않아도 완전한 메타데이터 확인 가능
 
 ## 4.7 오류 처리
 * 오류가 발생할 경우 error.js 파일에서 오류 처리
   - 클라이언트 컴포넌트여야 함
-* error 파일과 같은 폴더에 있는 layout 파일에 page를 <ErrorBoundary>로 감싼 것처럼 동작
+* error 파일과 같은 폴더에 있는 layout 파일에 page를 ```<ErrorBoundary>```로 감싼 것처럼 동작
   ```tsx
   <ErrorBoundary fallback={<Error />}>
     { children }
