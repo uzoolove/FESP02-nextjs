@@ -968,3 +968,109 @@ export default function Page() {
 ## 파일 정리
 * app 하위의 모든 index.html 삭제
 
+## 컴포넌트 분리
+### 전체 구조
+```
+src/
+├── app/
+│   ├── (community)/
+│   │   ├── (user)/
+│   │   │   │── login/
+│   │   │   │   └── page.tsx
+│   │   │   └── signup/
+│   │   │       └── page.tsx
+│   │   └── [type]/
+│   │       │── [id]/
+│   │       │   │── edit/
+│   │       │   │   └── page.tsx
+│   │       │   ├── CommentItem.tsx
+│   │       │   ├── CommentList.tsx
+│   │       │   ├── CommentNew.tsx
+│   │       │   └── page.tsx
+│   │       ├── new/
+│   │       │   └── page.tsx
+│   │       ├── ListItem.tsx
+│   │       └── page.tsx
+│   │── error.tsx
+│   │── layout.tsx
+│   │── loading.tsx
+│   │── not-found.tsx
+│   └── page.tsx
+│
+└── components/
+    ├── layout/
+    │   ├── Footer.tsx
+    │   └── Header.tsx
+    ├── Button.tsx
+    ├── Pagination.tsx
+    ├── Search.tsx
+    ├── Spinner.tsx
+    ├── Submit.tsx
+    └── Theme.tsx
+```
+
+### 루트 레이아웃 분리
+#### app/layout.tsx 파일에서 header, footer 분리
+* Header.tsx
+* Footer.tsx
+
+### 공통 컴포넌트 작성
+#### Button
+* Button.tsx
+
+#### Submit
+* Submit.tsx
+
+### 복잡한 컴포넌트 분리
+#### 페이지 네이션
+* Pagination.tsx
+
+#### 검색
+* Search.tsx
+
+#### 스피너
+* Spinner.tsx
+
+#### 라이트/다크 테마
+* Theme.tsx
+
+### 자식 컴포넌트 분리
+#### 댓글 입력 화면
+* CommentNew.tsx
+
+#### 댓글 목록
+* CommentList.tsx
+* CommentItem.tsx
+
+#### 게시물 목록의 아이템
+* ListItem.tsx
+
+## 활성 링크에 스타일 적용
+* app/globals.css 파일에 스타일 추가
+  ```css
+  ...
+  @layer components {
+    .cs-active {
+      @apply font-bold;
+    }
+  }
+  ```
+
+* app/layout.tsx에 추가
+``` tsx
+...
+const pathname = usePathname();
+const isActive = (path: string) => pathname === path ? 'cs-active' : '';
+...
+<li className={`hover:text-amber-500 hover:font-semibold ${ isActive('/') }`}><Link href="/info">정보공유</Link></li>
+<li className={`hover:text-amber-500 hover:font-semibold ${ isActive('/') }`}><Link href="/free">자유게시판</Link></li>
+<li className={`hover:text-amber-500 a:font-semibold ${ isActive('/') }`}><Link href="/qna">질문게시판</Link></li>
+...
+```
+
+## loading 추가
+
+## error 추가
+
+## not-found 추가
+
