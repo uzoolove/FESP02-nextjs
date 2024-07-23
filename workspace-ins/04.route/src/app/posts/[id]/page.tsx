@@ -22,6 +22,9 @@ export function generateMetadata({ params }: { params: { id: string } }): Metada
 
 export default function Page({ params }: { params: { id: string } }) {
   console.log(params.id);
+  if(params.id === '3'){
+    throw new Error('MongoDB에서 에러 발생함. mongo error code 1234');
+  }
   return (
     <h1 className="text-xl font-bold mb-4">{ params.id } 상세 조회</h1>
   );
