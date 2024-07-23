@@ -78,7 +78,6 @@ npm install next@latest react@latest react-dom@latest
 
 ### 개발 서버 실행
 ```sh
-cd 02.cna
 npm run dev
 ```
   * Next.js 프로젝트를 위한 tsconfig.json, next-env.d.ts 파일이 자동으로 생성됨
@@ -412,7 +411,7 @@ npm run dev
     return (
       <>
         <h1>글쓰기</h1>
-        <button type="button" onClick={ () => router.push('/posts') }>완료</button>
+        <button type="button" onClick={ () => router.push('/login') }>로그인</button>
       </>
     )
   }
@@ -497,7 +496,7 @@ npm run dev
   }
   
   export const config = {
-    matcher: '/posts/new*',
+    matcher: '/posts/new',
   }
   ```
 
@@ -580,3 +579,342 @@ npm run dev
 * generateMetadata 함수 내에서 데이터를 fetching하는 경우, Next.js는 이 데이터 fetching이 완료될 때까지 기다림
 * 데이터 fetching이 완료된 후 메타데이터를 최종적으로 생성하고, 이 메타데이터를 포함한 <head> 태그를 클라이언트로 스트리밍하기 시작
 * 클라이언트는 서버로부터 받은 초기 컨텐츠가 <head>를 포함하고 있기 때문에 검색엔진이 자바스크립트를 실행하지 않아도 완전한 메타데이터 확인 가능
+
+## 4.7 오류 처리
+* 오류가 발생할 경우 error.js 파일에서 오류 처리
+  - 클라이언트 컴포넌트여야 함
+* error 파일과 같은 폴더에 있는 layout 파일에 page를 <ErrorBoundary>로 감싼 것처럼 동작
+  ```tsx
+  <ErrorBoundary fallback={<Error />}>
+    { children }
+  </ErrorBoundary>
+  ```
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Ferror-overview.png&w=1920&q=75">
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fnested-error-component-hierarchy.png&w=1920&q=75">
+
+* 매개변수
+  - error: 에러 객체
+  - reset: 에러가 발생한 컴포넌트를 다시 렌더링 하는 함수
+    + 에러는 일시적인 요인으로 발생하는 경우가 많으므로 reset() 함수를 호출해서 리플래시 없이 해당 컴포넌트를 다시 렌더링 시도할 수 있음
+
+* page에서 에러가 발생할 경우 같은 폴더의 error에서 처리되고 layout에서 에러가 발생할 경우 상위 폴더의 error에서 처리됨
+
+* 루트 레이이웃에서 에러가 발생할 경우 상위 폴더가 없으므로 에러 처리가 안됨
+  - 대신 app/global-error.js 파일에서 에러 처리
+  - 루트 레이아웃에는 ```<html>```, ```<body>``` 태그가 있으므로 에러가 발생할 경우 대신 사용되는 global-error에 ```<html>```, ```<body>``` 태그가 있어야 함
+  - global-error.js는 프로덕션 환경에서만 동작
+
+* 서버 컴포넌트에서 발생한 에러는 프로덕션 환경일 때 error 객체의 민감한 오류 정보는 제거되고 클라이언트에 전달됨
+
+## 4.8 라우트 그룹
+* app 라우터는 app 하위 폴더가 URL 경로에 매핑됨
+* 폴더가 URL 경로에 포함되지 않게 하고 싶을때 라우트 그룹을 생성
+* (폴더명) 처럼 폴더명에 ()를 붙여서 작성
+* URL에 영향을 주지 않고 여러 페이지를 하나의 폴더에 묶어서 관리
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-group-organisation.png&w=1920&q=75">
+
+### 폴더가 라우트 경로에 포함
+* login, signin 폴더를 user 폴더 하위로 그룹화 해서 관리
+  ```
+  project-root/
+  ├── app/
+  │   ├── user/
+  │   │   ├── login/
+  │   │   │   └── page.js
+  │   │   ├── signin/
+  │   │   │   └── page.js
+  ```
+  - /user/login -> app/user/login/page.js
+  - /user/signin -> app/user/signin/page.js
+
+### 라우트 경로에서 제외하기 위해 폴더를 제거
+* 라우트 경로에서 user를 제거하기 위해서 user 폴더를 제거
+  ```
+  project-root/
+  ├── app/
+  │   ├── login/
+  │   │   └── page.js
+  │   ├── signin/
+  │   │   └── page.js
+  ```
+  - /login -> app/login/page.js
+  - /signin -> app/signin/page.js
+
+### 폴더를 제거하지 않고 라우트 경로를 제거
+* 라우트 그룹으로 관리
+  ```
+  project-root/
+  ├── app/
+  │   ├──(user)/
+  │   │   ├── login/
+  │   │   │   └── page.js
+  │   │   ├── signin/
+  │   │   │   └── page.js
+  ```
+  - /login -> app/(user)/login/page.js
+  - /signin -> app/(user)/signin/page.js
+
+* 라우트 그룹 하위에 layout 작성시 라우트 그룹 내부 페이지에만 적용
+  - 동일한 URL depth에 있는 페이지에 다른 layout을 적용하고 싶을 때
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-group-multiple-layouts.png&w=1920&q=75">
+
+* account, cart, check 페이지에서 account, cart에 동일한 레이아웃 적용
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-group-opt-in-layouts.png&w=1920&q=75">
+
+* 루트 레이아웃을 여러개 정의하고 싶을 때
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Froute-group-multiple-root-layouts.png&w=1920&q=75">
+
+
+* 다른 라우트 그룹에 동일한 하위 경로 작성시 컴파일 에러 발생
+
+## 4.9 프로젝트 구성 및 경로 관리
+* 라우팅 폴더 내에 page, route 파일이 있는 경우에만 라우팅 됨
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-not-routable.png&w=1920&q=75">
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-routable.png&w=1920&q=75">
+
+* page와 route 파일만 라우팅 됨
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-colocation.png&w=1920&q=75">
+
+### 프라이빗 폴더
+* _로 시작하는 폴더는 page 파일이 있어도 라우팅에서 제외
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-private-folders.png&w=1920&q=75">
+
+* 활용 사례
+  - UI 로직과 라우팅 로직 분리
+  - 프로젝트 및 Next.js 생태계 전반에 걸쳐 내부 파일을 일관되게 구성
+  - 코드 편집기에서 파일 분류 및 그룹화
+  - 향후 발생할 수도 있는 Next.js 특수 파일 규칙과의 잠재적인 이름 충돌을 방지
+
+### src 폴더
+* 프로젝트 환경 설정파일과 소스 코드를 분리하기 위해서 선택적으로 사용
+  ```
+  project_folder/
+  │
+  ├── src/
+  │   ├── app/
+  │   │   ├── layout.js
+  │   │   └── page.js
+  │   │
+  │   └── 라우터 이외의 소스 코드
+  │
+  ├── package.json
+  │
+  └── next.config.js
+  ```
+
+### 별칭
+* tsconfig.json, jsconfig.json 파일에 별칭 지정
+  - create-next-app을 이용하면 기본으로 추가되고 추가 별칭도 선택적으로 지정 가능
+    ```json
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+    ```
+
+```tsx
+// before
+import { Button } from '../../../components/button'
+ 
+// after
+import { Button } from '@/components/button'
+```
+
+### 프로젝트 폴더 구조 전략
+* 프로젝트 파일과 폴더를 어떻게 구성할 것인지에 대해서 올바르거나 틀린 방법은 없음
+* 여러 전략 중 팀에게 적합한 방식을 선택하고 일관성을 유지해야 함
+
+#### 프로젝트 파일을 app 외부에 저장
+* app 폴더는 라우팅으로만 사용하고 나머지 코드는 app 폴더 외부에 저장
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-project-root.png&w=1920&q=75">
+
+#### 프로젝트 파일을 app 내부에 저장
+* 모든 코드를 app 폴더 내부에 저장
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-app-root.png&w=1920&q=75">
+
+#### 기능이나 경로별로 파일 분할
+* 공용 컴포넌트나 라이브러리를 app 폴더 하위에 작성하고 각 페이지별로 사용할 컴포넌트나 라이브러리는 각 페이지 폴더 하위에 작성
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fproject-organization-app-root-split.png&w=1920&q=75">
+
+
+## 4.10 동적 경로
+* 고정된 URL이 아닌 바뀔수 있는 부분에 대해서 라우팅을 정의할 때 폴더명을 대괄호로 묶어서 생성
+  - posts/1, posts/2 -> posts/[id]
+* 실제 요청한 URL의 동적 경로 값은 layout, page, route, generateMetadata 함수에 params prop으로 전달됨
+* 요청한 URL이 /posts/3일 경우 3을 꺼내는 방법
+  ```tsx
+  export default function Page({ params: { id } }: { params: { id: string }}) {
+    return <h1>{ params.id }번 게시물 상세 조회</h1>
+  }
+  ```
+* app/posts/[id]/page.js 파일이 있을때 매칭되는 URL과 params 값
+  - /posts/1 -> { id: '1' }
+  - /posts/2 -> { id: '2' }
+  - /posts/3 -> { id: '3' }
+
+* 동적 경로를 사용해서 특정 게시글에 달린 좋아요 목록, 관심글로 등록한 목록과 좋아요 상세정보, 관심글 상세 정보를 보여줄 때 만들어야 할 파일
+  - app/posts/[pid]/[slug]/page.js
+    + /posts/1/likes -> { pid: '1', slug: ['likes'] }
+    + /posts/2/likes -> { pid: '2', slug: ['likes'] }
+    + /posts/2/favorites -> { pid: '1', slug: ['favorites'] }
+  - app/posts/[pid]/[slug]/[sid]/page.js
+    + /posts/3/likes/4 -> { pid: '3', slug: ['likes'], sid: '4' }
+    + /posts/3/favorites/4 -> { pid: '3', slug: ['favorites'], sid: '4' }
+
+### generateStaticParams() 함수
+* 동적 경로로 구성된 페이지의 params를 미리 지정해서 빌드시 해당 파라미터를 가지는 페이지를 정적으로 생성
+* 미리 생성할 정적 페이지의 params를 배열로 반환하도록 작성
+
+* 빌드 할 때 동작 순서
+  ```tsx
+  export async function generateStaticParams() {
+    // 공지글에 대한 fetch 작업
+    const posts = [
+      { id: '1', title: '...' },
+      { id: '2', title: '...' },
+      { id: '3', title: '...' },
+    ];
+
+    return posts.map((post) => ({
+      id: post.id
+    }))
+  }
+
+  export default async function Page({ params: { id } }: { params: { id: string } }){
+    const resJson = await fetchPost(id);
+    let data = resJson.ok ? resJson.item : null;
+    return (
+      ...
+    );
+  }
+  ```
+  1. 빌드시 generateStaticParams() 함수 호출 후 반환 받은 배열의 각 요소를 params로 구성해서 Page 컴포넌트 호출
+  2. Page 컴포넌트에서 반환 받은 HTML을 빌드 결과로 저장(posts/1.html, 2.html, 3.html)
+
+### Catch-all 세그먼트
+* 대괄호 안에 줄임표(...)를 추가하면 하위 경로에 대해서도 매핑됨
+
+* Catch-all 세그먼트를 이용해서 특정 게시글에 달린 좋아요 목록, 관심글로 등록한 목록과 좋아요 상세정보, 관심글 상세 정보를 보여줄 때 만들어야 할 파일
+  - app/posts/[id]/[...slug]/page.js
+    + /posts/1/likes -> { id: '1', slug: ['likes'] }
+    + /posts/2/likes -> { id: '2', slug: ['likes'] }
+    + /posts/2/favorites -> { id: '2', slug: ['favorites']}
+    + /posts/3/like/4 -> { id: '3', slug: ['likes', '4'] }
+    + /posts/3/favorites/4 -> { id: 3', slug: ['favorites', '4'] }
+
+### Optional Catch-all 세그먼트
+* 폴더명을 이중 대괄호로 묶어서 작성하면 Catch-all 세그먼트를 선택사항으로 지정
+
+* 특정 게시글과 댓글 목록, 댓글 상세 정보를 하나의 page로 처리할 경우
+  - app/posts/[id]/[[...slug]]/page.js
+    + /posts/1 -> { id: '1' }
+    + /posts/2 -> { id: '2' }
+    + /posts/3/replies -> { id: '3', slug: ['replies'] }
+    + /posts/3/replies/2 -> { id: '3', slug: ['replies', '2'] }
+
+### 동적 경로에 대한 타입 스크립트 params 타입
+* app/posts/[id]/page.js
+```tsx
+export default function Page({ params }: { params: { id: string } }) {
+  return <h1>My Page</h1>
+}
+```
+
+* app/posts/[...slug]/page.js -> { slug: string[] }
+* app/posts/[[...slug]]/page.js -> { slug?: string[] }
+* app/posts/[id]/[slug]/page.js -> { id: string, slug: string }
+
+## 4.11 병렬 라우팅
+* 하나의 레이아웃 내에서 여러 페이지를 동시에 또는 조건부로 렌더링
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes.png&w=1920&q=75">
+
+* 슬롯: '@폴더명' 형태의 이름으로 생성
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes-file-system.png&w=1920&q=75">
+
+* 슬롯은 동일 레벨의 레이아웃에 props으로 전달됨
+* 슬롯은 경로에 계산되지 않음
+  - app/@team/world 폴더 -> /world
+
+```tsx
+export default function Layout({
+  children,
+  team,
+  analytics,
+}: {
+  children: React.ReactNode
+  analytics: React.ReactNode
+  team: React.ReactNode
+}) {
+  return (
+    <>
+      { children }
+      { team }
+      { analytics }
+    </>
+  )
+}
+```
+
+* Layout에 props로 전달되는 children은 사실 @children 슬롯이며 이는 따로 만들 필요가 없는 암시적 슬롯
+  - app/@children/page.js == app/page.js
+
+* 장점
+  - 동시에 렌더링 되기 때문에 속도가 빠름
+  - loading, error 페이지를 각 슬롯별 독립적으로 보여줄 수 있음
+  <img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fparallel-routes-cinematic-universe.png&w=1920&q=75">
+  - 로딩이 완료된 페이지 먼저 표시 가능
+  - 인증 상태와 같은 조건에 따른 렌더링 가능
+  <img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fconditional-routes-ui.png&w=1920&q=75">
+  ```tsx
+  import { checkUserRole } from '@/lib/auth';
+  
+  export default function Layout({
+    user,
+    admin,
+  }: {
+    user: React.ReactNode
+    admin: React.ReactNode
+  }) {
+    const role = checkUserRole();
+    return <>{role === 'admin' ? admin : user}</>
+  }
+  ```
+
+* 슬롯이 로딩된 상태에서 페이지 이동
+  - 소프트 네비게이션(Link로 이동)
+    + 매칭되는 URL이 없는 슬롯은 이전의 내용을 유지
+    + 이전에 매칭되는 슬롯이 보여진 후에는 매칭되는 URL이 없어도 에러가 나지는 않음
+  - 하드 네비게이션(주소창에 직접 입력하거나 새로고침)
+    + 매칭되는 URL이 없는 슬롯에 default 파일이 있을 경우 default를 렌더링하고 default가 없으면 404 에러
+    
+## 4.12 라우트 인터셉트
+* 라우팅을 인터셉트해서 현재 페이지를 벗어나지 않고 컨텐츠를 표시하고 싶을 때 사용
+  - 특정 페이지에서 로그인 화면으로 이동하지 않고 로그인 모달을 띄우기
+  - 게시판 목록에서 상세 조회를 할 때 레이어 형태로 상세 화면을 띄우기
+  - 장바구니를 클릭하면 현재 화면을 유지한 상태로 보여주기
+* 하드 네비게이션시 원래 경로의 컨텐츠를 보여줌
+* 폴더명 앞에 일치해야 하는 URL에 맞출 수 있도록 상대 경로를 ()안에 기술
+  - (.): 동일 경로
+  - (..): 한단계 상위 폴더
+  - (..)(..): 두단계 상위 폴더
+  - (...): 루트 폴더(app)
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fintercepting-routes-soft-navigate.png&w=1920&q=75">
+
+* /feed 경로에서 소프트 네비게이션으로 /photo로 이동할 경우 현재 URL은 /photo 지만 feed/(..)photo/page가 렌더링되고 새로고침하면 photo/page가 렌더링 됨
+  - 새로고침시 인터셉트 되지 않기 때문에 원래 화면으로 보여주기 가능(갤러리 모달 -> 갤러리 화면, 로그인 모달 -> 로그인 화면)
+  - 모달로 보여주는 컨텐츠를 URL로 공유 가능
+#### 모달 구현
+* 라우팅 인터셉트와 병렬 라우팅을 활용하면 모달 구현 가능
+  - 닫기 대신 이전/이후 페이지 이동시 모달 없애고 다시 보여주기 가능
