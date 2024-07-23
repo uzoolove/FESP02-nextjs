@@ -354,9 +354,11 @@ npm run dev
 
 * app/globals.css 작성
   ```css
-  .active {
-    font-weight: bold;
-    color: blue;
+  ...
+  @layer components {
+    .cs-active {
+      @apply font-bold;
+    }
   }
   ```
 
