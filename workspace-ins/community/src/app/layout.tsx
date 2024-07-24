@@ -27,7 +27,7 @@ export default function RootLayout({
         <meta property="og:title" content="멋사컴에 오신걸 환영합니다." />
         <meta property="og:description" content="유용한 정보를 나누고 공유하세요." />
         <meta property="og:image" content="/images/fesp.webp" />
-        <meta property="og:url" content="https://community.fesp.shop" />
+        <meta property="og:url" content="https://next.fesp.shop" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="멋사컴" />
       </head>
