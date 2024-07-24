@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import ListItem from "./ListItem";
 import { fetchPosts } from "@/data/fetch/postFetch";
+import model from "@/data/fetch/model";
 
 export function generateMetadata({ params }: { params: { type: string } }): Metadata{
   const boardName = params.type;
@@ -22,7 +23,8 @@ export function generateMetadata({ params }: { params: { type: string } }): Meta
 }
 
 export default async function Page({ params }: { params: { type: string } }) {
-  const data = await fetchPosts(params.type);
+  // const data = await fetchPosts(params.type); // API 서버 호출
+  const data = await model.post.list(params.type); // 직접 구현
   const list = data.map(item => <ListItem key={item._id} item={item} />);
   // const list = [<ListItem key={1} />, <ListItem key={2} />];
   return (

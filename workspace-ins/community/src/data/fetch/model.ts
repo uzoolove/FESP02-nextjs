@@ -1,4 +1,4 @@
-import { Post, User } from "@/types";
+import { Post, PostComment, User } from "@/types";
 import moment from "moment";
 import { Collection, Db, MongoClient } from "mongodb";
 
