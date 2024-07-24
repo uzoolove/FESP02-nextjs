@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { usePathname } from 'next/navigation';
 
+// server component에서만 사용 가능
 export const metadata: Metadata = {
   // url 관련 설정시 metadata 사용될 기본 경로 지정
   metadataBase: new URL('https://next.fesp.shop'),

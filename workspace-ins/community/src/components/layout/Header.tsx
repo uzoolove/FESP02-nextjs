@@ -5,7 +5,7 @@ import Theme from "../Theme";
 import { usePathname } from "next/navigation";
 
 export default function Header() {
-  const pathname = usePathname();
+  const pathname = usePathname(); // client component에서만 사용 가능
   const isActive = (path: string) => pathname === path ? 'cs-active' : '';
 
   return (
