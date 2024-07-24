@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-export default function RootPage() {
+export default async function RootPage() {
+  await new Promise(resolve => setTimeout(resolve, 1000*3));
   return (
     <main className="container mx-auto mt-10 p-4 transition-color">
       <section className="text-center">
