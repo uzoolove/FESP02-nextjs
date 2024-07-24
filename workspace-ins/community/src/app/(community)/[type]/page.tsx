@@ -3,6 +3,7 @@ import Search from "@/components/Search";
 import { Metadata } from "next";
 import Link from "next/link";
 import ListItem from "./ListItem";
+import { fetchPosts } from "@/data/fetch/postFetch";
 
 export function generateMetadata({ params }: { params: { type: string } }): Metadata{
   const boardName = params.type;
@@ -20,8 +21,10 @@ export function generateMetadata({ params }: { params: { type: string } }): Meta
   };
 }
 
-export default function Page({ params }: { params: { type: string } }) {
-  const list = [<ListItem key={1} />, <ListItem key={2} />];
+export default async function Page({ params }: { params: { type: string } }) {
+  const data = await fetchPosts(params.type);
+  const list = data.map(item => <ListItem key={item._id} item={item} />);
+  // const list = [<ListItem key={1} />, <ListItem key={2} />];
   return (
     <main className="min-w-80 p-10">
       <div className="text-center py-4">
