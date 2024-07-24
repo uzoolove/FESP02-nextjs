@@ -30,12 +30,12 @@ db.seq = db.collection('seq');
 
 const model = {
   post: {
-    async list(type: string){
+    async list(type: string): Promise<Post[]>{
       const data = await db.post.find({type}).limit(10).sort({_id: -1}).toArray();
       console.log(data);
       return data;
     },
-    async detail(_id: number){
+    async detail(_id: number): Promise<Post | null>{
       const data = await db.post.findOneAndUpdate(
         {_id}, 
         {$inc: {views: 1}}, 

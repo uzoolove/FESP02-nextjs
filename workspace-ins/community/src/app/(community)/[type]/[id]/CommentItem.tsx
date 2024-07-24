@@ -8,7 +8,7 @@ export default function CommentItem({ item }: { item: PostComment }) {
       <div className="flex justify-between items-center mb-2">
         <img
           className="w-8 mr-2 rounded-full"
-          src={`https://api.fesp.shop${item.user?.profileImage}`}
+          src={`https://api.fesp.shop${item.user?.profile}`}
           alt="프로필 이미지"
         />
         <Link href="" className="text-orange-400">{item.user?.name}</Link>

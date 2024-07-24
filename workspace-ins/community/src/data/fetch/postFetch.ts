@@ -28,7 +28,7 @@ export async function fetchPost(_id: string){
   const res = await fetch(url);
   const resJson: ApiRes<SingleItem<Post>> = await res.json();
   if(!resJson.ok){
-    throw new Error('게시물 상세 조회 실패');
+    return null;
   }
   return resJson.item;
 }

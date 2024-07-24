@@ -3,15 +3,19 @@ import { Metadata } from "next";
 import Link from "next/link";
 import CommentList from "./CommentList";
 import { fetchPost } from "@/data/fetch/postFetch";
+import model from "@/data/fetch/model";
+import { notFound } from "next/navigation";
 
-export function generateMetadata({ params }: { params: { type: string, id: string } }): Metadata {
+export async function generateMetadata({ params }: { params: { type: string, id: string } }): Promise<Metadata> {
   const boardName = params.type;
+  const item = await fetchPost(params.id);
+  if(item === null) notFound();
   return {
-    title: `${boardName} - 좋은 소식이 있습니다.`,
-    description: `${boardName} - 좋은 소식을 가지고 왔습니다. 오늘 드디어...`,
+    title: `${boardName} - ${item.title}`,
+    description: `${boardName} - ${item.content}`,
     openGraph: {
-      title: `${boardName} - 좋은 소식이 있습니다.`,
-      description: `${boardName} - 좋은 소식을 가지고 왔습니다. 오늘 드디어...`,
+      title: `${boardName} - ${item.title}`,
+      description: `${boardName} - ${item.content}`,
       url: `/${params.type}/${params.id}`
     }
   };
@@ -25,7 +29,10 @@ export async function generateStaticParams(){
 }
 
 export default async function Page({ params }: { params: { type: string, id: string } }) {
+  // const item = await model.post.detail(Number(params.id));
   const item = await fetchPost(params.id);
+  if(item === null) notFound();
+
   return (
     <main className="container mx-auto mt-4 px-4">
 
