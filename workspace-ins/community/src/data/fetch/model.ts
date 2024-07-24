@@ -13,11 +13,12 @@ interface CommunityDb extends Db{
   seq: Collection<Seq>,
 }
 
-const url = 'mongodb://sample:sample11!!@db.fesp.shop:27017';
+
+const url = process.env.DB_SERVER!;
 // const url = 'mongodb://localhost:27017';
 const client = new MongoClient(url);
-const dbName = '00-sample';
-console.log('try to connect...');
+const dbName = process.env.DB_NAME;
+console.log(`try to connect... ${process.env.DB_SERVER}:${process.env.DB_PORT}`);
 
 // Use connect method to connect to the server
 await client.connect();

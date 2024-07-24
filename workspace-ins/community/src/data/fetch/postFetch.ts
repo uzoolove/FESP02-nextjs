@@ -22,3 +22,9 @@ export async function fetchPosts(
   }
   return resJson.item;
 }
+
+async function fetchPost(_id: string){
+  const url = `${SERVER}/posts/${_id}`;
+  const res = await fetch(url);
+  return res.json();
+}
