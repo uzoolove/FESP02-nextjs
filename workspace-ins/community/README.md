@@ -99,7 +99,7 @@ export default function RootLayout({
         <meta property="og:title" content="멋사컴에 오신걸 환영합니다." />
         <meta property="og:description" content="유용한 정보를 나누고 공유하세요." />
         <meta property="og:image" content="/images/fesp.webp" />
-        <meta property="og:url" content="https://community.fesp.shop" />
+        <meta property="og:url" content="https://next.fesp.shop" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="멋사컴" />
       </head>
@@ -1011,39 +1011,473 @@ src/
 
 ### 루트 레이아웃 분리
 #### app/layout.tsx 파일에서 header, footer 분리
-* Header.tsx
-* Footer.tsx
+* components/layout/Header.tsx
+```tsx
+import Link from "next/link";
+
+export default function Header() {
+  return (
+    <header className="px-8 min-w-80 bg-slate-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 transition-color duration-500 ease-in-out">
+      <nav className="flex flex-wrap justify-center items-center p-4 md:flex-nowrap md:justify-between">
+        <div className="w-1/2 order-1 md:w-auto">
+          <Link href="/" className="flex items-center gap-2">
+            <img className="mr-3 h-6 sm:h-9" src="/images/favicon.svg" width="40" height="40" alt="로고 이미지" />
+            <span className="text-lg font-bold">멋사컴</span>
+          </Link>
+        </div>
+        <div className="w-auto order-2 text-base mt-4 md:mt-0">
+          <ul className="flex items-center gap-6 uppercase">
+            <li className="hover:text-amber-500 hover:font-semibold"><Link href="/info">정보공유</Link></li>
+            <li className="hover:text-amber-500 hover:font-semibold"><Link href="/free">자유게시판</Link></li>
+            <li className="hover:text-amber-500 a:font-semibold"><Link href="/qna">질문게시판</Link></li>
+          </ul>
+        </div>
+
+        <div className="w-1/2 order-1 flex justify-end items-center md:order-2 md:w-auto">
+
+          <div className="flex justify-end">
+            <Link href="/login" className="bg-orange-500 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">로그인</Link>
+            <Link href="/signup" className="bg-gray-900 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">회원가입</Link>
+          </div>
+
+          <button
+            type="button"
+            data-toggle-dark="dark"
+            className="ml-4 flex items-center w-8 h-8 justify-center text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-lg toggle-dark-state-example hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 dark:bg-gray-800 focus:outline-none dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+          >
+            <svg
+              data-toggle-icon="moon"
+              className="w-3.5 h-3.5 hidden"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 18 20"
+            >
+              <path d="M17.8 13.75a1 1 0 0 0-.859-.5A7.488 7.488 0 0 1 10.52 2a1 1 0 0 0 0-.969A1.035 1.035 0 0 0 9.687.5h-.113a9.5 9.5 0 1 0 8.222 14.247 1 1 0 0 0 .004-.997Z"></path>
+            </svg>
+            <svg
+              data-toggle-icon="sun"
+              className="w-3.5 h-3.5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-11a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v2a1 1 0 0 0 1 1Zm0 12a1 1 0 0 0-1 1v2a1 1 0 1 0 2 0v-2a1 1 0 0 0-1-1ZM4.343 5.757a1 1 0 0 0 1.414-1.414L4.343 2.929a1 1 0 0 0-1.414 1.414l1.414 1.414Zm11.314 8.486a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414ZM4 10a1 1 0 0 0-1-1H1a1 1 0 0 0 0 2h2a1 1 0 0 0 1-1Zm15-1h-2a1 1 0 1 0 0 2h2a1 1 0 0 0 0-2ZM4.343 14.243l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0-1.414-1.414ZM14.95 6.05a1 1 0 0 0 .707-.293l1.414-1.414a1 1 0 1 0-1.414-1.414l-1.414 1.414a1 1 0 0 0 .707 1.707Z"></path>
+            </svg>
+            <span className="sr-only">Toggle dark/light mode</span>
+          </button>
+
+        </div>
+      </nav>
+    </header>
+  );
+}
+```
+
+* components/layout/Footer.tsx
+```tsx
+export default function Footer() {
+  return (
+    <footer className="p-4 pb-12 w-full border-t border-t-slate-200  dark:border-t-slate-500 dark:bg-gray-600 text-gray-600 dark:text-white transition-color duration-500 ease-in-out">
+      <div className="min-w-[320px] flex flex-wrap gap-4 justify-center items-center text-sm text-slate-400">
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">약관</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">게시판 정책</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">회사소개</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">광고</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">마이비즈니스</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">제휴 제안</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">이용약관</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">개인정보취급방침</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">청소년보호 정책</a>
+        <a href="#" className="hover:font-semibold dark:hover:text-gray-200">고객센터</a>
+      </div>
+    </footer>
+  );
+}
+```
+
+* app/layout.tsx
+```tsx
+import './globals.css';
+
+import { Metadata } from 'next';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+
+export const metadata: Metadata = {
+  // url 관련 설정시 metadata 사용될 기본 경로 지정
+  metadataBase: new URL('https://next.fesp.shop'),
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="ko">
+      <head>
+        <meta charSet="UTF-8" />
+        <link rel="icon" type="image/x-icon" href="/images/favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>멋쟁이 사자처럼 커뮤니티 - 멋사컴</title>
+
+        <meta name="description" content="다양한 주제의 커뮤니티와 활발한 소통을 위한 플랫폼입니다. 관심사에 따라 참여하고, 의견을 나누세요." />
+        <meta name="keywords" content="커뮤니티, 소통, 포럼, 관심사, 온라인 모임, 커뮤니티 서비스" />
+        <meta name="author" content="FESP 2기" />
+
+        <meta property="og:title" content="멋사컴에 오신걸 환영합니다." />
+        <meta property="og:description" content="유용한 정보를 나누고 공유하세요." />
+        <meta property="og:image" content="/images/fesp.webp" />
+        <meta property="og:url" content="https://community.fesp.shop" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="멋사컴" />
+      </head>
+      <body>
+        <div id="root">
+          <div className="flex flex-col min-h-screen dark:bg-gray-700 dark:text-gray-200 transition-color duration-500 ease-in-out">
+            <Header />
+            { children }            
+            <Footer />
+          </div>
+        </div>
+      </body>
+    </html>
+  );
+}
+```
 
 ### 공통 컴포넌트 작성
 #### Button
-* Button.tsx
+* components/Button.tsx
+```tsx
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode,
+  bgColor?: 'gray' | 'orange' | 'red',
+  size?: 'sm' | 'md' | 'lg',
+}
+
+const Button: React.FC<ButtonProps> = ({ children, type = 'button', bgColor = 'orange', size = 'md', ...rest }) => {
+  let btnColor = {
+    gray: `bg-gray-900`,
+    orange: 'bg-orange-500',
+    red: 'bg-red-500',
+  };
+  let btnSize = {
+    sm: 'py-1 px-2 text-sm',
+    md: 'py-1 px-4 text-base',
+    lg: 'py-2 px-6 text-lg',
+  };
+
+  return (
+    <button
+      type={ type }
+      className={`${ btnColor[bgColor] } ${ btnSize[size] } text-white font-semibold ml-2 text-base hover:bg-amber-400 rounded`}
+      { ...rest }
+    >
+      { children }
+    </button>
+  );
+}
+
+export default Button;
+```
 
 #### Submit
-* Submit.tsx
+* components/Submit.tsx
+```tsx
+import Button, { ButtonProps } from '@/components/Button';
+
+const Submit: React.FC<ButtonProps> = ({ children, ...rest }) => {
+  return (
+    <Button type="submit" { ...rest }>{ children }</Button>
+  );
+};
+
+export default Submit;
+```
+
+#### Button, Submit 적용
+
+##### app/(community)/[type]/[id]/page.tsx
+* 적용전
+```tsx
+<button type="submit" className="bg-red-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">삭제</button>
+<button type="submit" className="bg-red-500 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">삭제</button>
+<button type="submit" className="bg-red-500 py-1 px-2 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">삭제</button>
+<button type="submit" className="bg-orange-500 py-1 px-4 text-sm text-white font-semibold ml-2 hover:bg-amber-400 rounded">댓글 등록</button>
+```
+
+* 적용후
+```tsx
+<Submit bgColor="red">삭제</Submit>
+<Submit bgColor="red" size="sm">삭제</Submit>
+<Submit bgColor="red" size="sm">삭제</Submit>
+<Submit size="sm">댓글 등록</Submit>
+```
+
+##### app/(community)/[type]/[id]/edit/page.tsx
+* 적용전
+```tsx
+<button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">수정</button>
+```
+
+* 적용후
+```tsx
+<Submit>수정</Submit>
+```
+
+##### app/(community)/[type]/page.tsx
+* 적용전
+```tsx
+<button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">검색</button>
+```
+
+* 적용후
+```tsx
+<Submit>검색</Submit>
+```
+
+##### app/(community)/[type]/new/page.tsx
+* 적용전
+```tsx
+<button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">등록</button>
+```
+
+* 적용후
+```tsx
+<Submit>등록</Submit>
+```
+
+##### app/(community)/(user)/login/page.tsx
+* 적용전
+```tsx
+<button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">로그인</button>
+```
+
+* 적용후
+```tsx
+<Submit>로그인</Submit>
+```
+
+##### app/(community)/(user)/signup/page.tsx
+* 적용전
+```tsx
+<button type="submit" className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">회원가입</button>
+```
+
+* 적용후
+```tsx
+<Submit>회원가입</Submit>
+```
 
 ### 복잡한 컴포넌트 분리
-#### 페이지 네이션
-* Pagination.tsx
+#### 페이지네이션
+* compoments/Pagination.tsx
+```tsx
+'use client';
+
+import Link from "next/link";
+import { useParams } from "next/navigation";
+
+export default function Pagination() {
+  const params = useParams();
+  return (
+    <div>
+      <ul className="flex justify-center gap-3 m-4">
+        <li className="font-bold text-blue-700">
+          <Link href={`/${params.type}?page=1`}>1</Link>
+        </li>
+        <li>
+          <Link href={`/${params.type}?page=2`}>2</Link>
+        </li>
+      </ul>
+    </div>
+  );
+}
+```
 
 #### 검색
 * Search.tsx
+```tsx
+import Submit from './Submit';
+
+export default function Search() {
+  return (
+    <form action="#">
+      <input
+        className="dark:bg-gray-600 bg-gray-100 p-1 rounded"
+        type="text"
+        name="keyword"
+      />
+      <Submit>검색</Submit>
+    </form>
+  );
+};
+```
 
 #### 스피너
 * Spinner.tsx
+```sh
+npm i react-spinners
+```
+
+```tsx
+'use client';
+
+import { HashLoader, ScaleLoader } from "react-spinners";
+
+export function FullScreen(){
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-60">
+      <div className="flex flex-col items-center">
+        <h3 className="mb-4 text-lg font-semibold">잠시만 기다려주세요.</h3>
+        <HashLoader
+          color="#f58714"
+          size={60}
+        />
+      </div>
+    </div>
+  );
+}
+
+export function TargetArea(){
+  return (
+    <div className="flex justify-center">
+      <ScaleLoader color="#F97316"/>
+    </div>
+  );
+}
+```
 
 #### 라이트/다크 테마
 * Theme.tsx
+```tsx
+<button
+  type="button"
+  data-toggle-dark="dark"
+  className="ml-4 flex items-center w-8 h-8 justify-center text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-lg toggle-dark-state-example hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 dark:bg-gray-800 focus:outline-none dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+>
+  <svg
+    data-toggle-icon="moon"
+    className="w-3.5 h-3.5 hidden"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="currentColor"
+    viewBox="0 0 18 20"
+  >
+    <path d="M17.8 13.75a1 1 0 0 0-.859-.5A7.488 7.488 0 0 1 10.52 2a1 1 0 0 0 0-.969A1.035 1.035 0 0 0 9.687.5h-.113a9.5 9.5 0 1 0 8.222 14.247 1 1 0 0 0 .004-.997Z"></path>
+  </svg>
+  <svg
+    data-toggle-icon="sun"
+    className="w-3.5 h-3.5"
+    aria-hidden="true"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="currentColor"
+    viewBox="0 0 20 20"
+  >
+    <path d="M10 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0-11a1 1 0 0 0 1-1V1a1 1 0 0 0-2 0v2a1 1 0 0 0 1 1Zm0 12a1 1 0 0 0-1 1v2a1 1 0 1 0 2 0v-2a1 1 0 0 0-1-1ZM4.343 5.757a1 1 0 0 0 1.414-1.414L4.343 2.929a1 1 0 0 0-1.414 1.414l1.414 1.414Zm11.314 8.486a1 1 0 0 0-1.414 1.414l1.414 1.414a1 1 0 0 0 1.414-1.414l-1.414-1.414ZM4 10a1 1 0 0 0-1-1H1a1 1 0 0 0 0 2h2a1 1 0 0 0 1-1Zm15-1h-2a1 1 0 1 0 0 2h2a1 1 0 0 0 0-2ZM4.343 14.243l-1.414 1.414a1 1 0 1 0 1.414 1.414l1.414-1.414a1 1 0 0 0-1.414-1.414ZM14.95 6.05a1 1 0 0 0 .707-.293l1.414-1.414a1 1 0 1 0-1.414-1.414l-1.414 1.414a1 1 0 0 0 .707 1.707Z"></path>
+  </svg>
+  <span className="sr-only">Toggle dark/light mode</span>
+</button>
+```
 
 ### 자식 컴포넌트 분리
 #### 댓글 입력 화면
 * CommentNew.tsx
+```tsx
+import Submit from "@/components/Submit";
+
+export default function CommentNew() {
+  return (
+    <div className="p-4 border border-gray-200 rounded-lg">
+      <h4 className="mb-4">새로운 댓글을 추가하세요.</h4>
+      <form action="#">
+        <div className="mb-4">
+          <textarea
+            rows={3}
+            cols={40}
+            className="block p-2 w-full text-sm border rounded-lg border-gray-300 bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+            placeholder="내용을 입력하세요."
+            name="comment"></textarea>
+
+          <p className="ml-2 mt-1 text-sm text-red-500">
+            내용은 필수입니다.
+          </p>
+          
+        </div>
+        <Submit size="sm">댓글 등록</Submit>
+      </form>
+    </div>
+  );
+}
+```
 
 #### 댓글 목록
 * CommentList.tsx
+```tsx
+import CommentNew from "./CommentNew";
+import CommentItem from "./CommentItem";
+
+export default function CommentList() {
+  const list = [<CommentItem key={1} />, <CommentItem key={2} />];
+  return (
+    <section className="mb-8">
+      <h4 className="mt-8 mb-4 ml-2">댓글 2개</h4>
+      { list }
+      <CommentNew />
+    </section>
+  );
+}
+```
+
 * CommentItem.tsx
+```tsx
+import Submit from "@/components/Submit";
+import Link from "next/link";
+
+export default function CommentItem() {
+  return (
+    <div className="shadow-md rounded-lg p-4 mb-4">
+      <div className="flex justify-between items-center mb-2">
+        <img
+          className="w-8 mr-2 rounded-full"
+          src="https://api.fesp.shop/files/00-sample/user-apeach.webp"
+          alt="어피치 프로필 이미지"
+        />
+        <Link href="" className="text-orange-400">어피치</Link>
+        <time className="ml-auto text-gray-500" dateTime="2024.07.02 14:11:22">2024.07.02 14:11:22</time>
+      </div>
+      <div className="flex justify-between items-center mb-2">
+        <form action="#">
+          <pre className="whitespace-pre-wrap text-sm">화이팅!</pre>
+          <Submit bgColor="red" size="sm">삭제</Submit>
+        </form>
+      </div>
+    </div>
+  );
+}
+```
 
 #### 게시물 목록의 아이템
 * ListItem.tsx
+```tsx
+import Link from "next/link";
+
+export default function ListItem() {
+  return (
+    <tr className="border-b border-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-300 ease-in-out">
+      <td className="p-2 text-center">2</td>
+      <td className="p-2 truncate indent-4"><Link href={`/info/1`} className="cursor-pointer">안녕하세요.</Link></td>
+      <td className="p-2 text-center truncate">용쌤</td>
+      <td className="p-2 text-center hidden sm:table-cell">29</td>
+      <td className="p-2 text-center hidden sm:table-cell">2</td>
+      <td className="p-2 truncate text-center hidden sm:table-cell">2024.07.05 13:39:23</td>
+    </tr>
+  );
+}
+```
 
 ## 활성 링크에 스타일 적용
 * app/globals.css 파일에 스타일 추가
@@ -1062,15 +1496,70 @@ src/
 const pathname = usePathname();
 const isActive = (path: string) => pathname === path ? 'cs-active' : '';
 ...
-<li className={`hover:text-amber-500 hover:font-semibold ${ isActive('/') }`}><Link href="/info">정보공유</Link></li>
-<li className={`hover:text-amber-500 hover:font-semibold ${ isActive('/') }`}><Link href="/free">자유게시판</Link></li>
-<li className={`hover:text-amber-500 a:font-semibold ${ isActive('/') }`}><Link href="/qna">질문게시판</Link></li>
-...
+
+```
+## loading 추가
+* app/loading.tsx
+```tsx
+import { FullScreen } from "@/components/Spinner";
+
+export default function Loading() {
+  return <FullScreen />;
+}
 ```
 
-## loading 추가
-
 ## error 추가
+* app/error.tsx
+```tsx
+'use client';
+
+export default function Error({ error, reset }: { error: Error, reset: () => void }) {
+  return (
+    <div className="py-20 bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg flex flex-col items-center space-y-2">
+      <h2 className="text-xl font-semibold mb-2 text-center">🚧 앗, 무언가 잘못됐네요!</h2>
+      <h3 className="text-md font-semibold mb-2 text-center">{ error.message }</h3>
+      <p className="pt-12 text-center">이 오류는 더 나은 서비스를 위한 첫걸음이에요. 조금만 기다려 주세요!</p>
+      <button className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600">
+        ⚙️ 문제 해결하기
+      </button>
+    </div>
+  );
+}
+```
 
 ## not-found 추가
+* app/not-fount.tsx
+```tsx
+'use client';
 
+import Link from "next/link";
+
+export default function Error() {
+  return (
+    <div className="py-20 bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg flex flex-col items-center space-y-2">
+      <h2 className="text-xl font-semibold mb-2 text-center">🚧 앗, 무언가 잘못됐네요!</h2>
+      <h3 className="text-md font-semibold mb-2 text-center">요청하신 페이지를 찾을 수 없습니다.</h3>
+      <Link href="/" className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-600">
+        ⚙️ 홈으로 돌아가기
+      </Link>
+    </div>
+  );
+}
+```
+
+## 공지 게시판 추가
+* app/layout.tsx에 추가
+```tsx
+<li className={`hover:text-amber-500 a:font-semibold ${isActive('/notice')}`}><Link href="/notice">공지게시판</Link></li>
+```
+
+### 공지사항 미리 렌더링
+* app/(community)/[type]/[id]/page.tsx에 추가
+```tsx
+export async function generateStaticParams(){
+  return [
+    { type: 'notice', id: '4' },
+    { type: 'notice', id: '5' },
+  ];
+}
+```
