@@ -1,4 +1,4 @@
-import { ApiRes, MultiItem, Post } from "@/types";
+import { ApiRes, MultiItem, Post, SingleItem } from "@/types";
 
 const SERVER = process.env.API_SERVER;
 const LIMIT = process.env.LIMIT;
@@ -23,8 +23,12 @@ export async function fetchPosts(
   return resJson.item;
 }
 
-async function fetchPost(_id: string){
+export async function fetchPost(_id: string){
   const url = `${SERVER}/posts/${_id}`;
   const res = await fetch(url);
-  return res.json();
+  const resJson: ApiRes<SingleItem<Post>> = await res.json();
+  if(!resJson.ok){
+    throw new Error('게시물 상세 조회 실패');
+  }
+  return resJson.item;
 }
