@@ -1,6 +1,9 @@
 import Submit from "@/components/Submit";
+import { signup } from "@/data/actions/userAction";
+import { UserForm } from "@/types";
 import { Metadata } from "next";
 import Link from "next/link";
+import { useForm } from "react-hook-form";
 
 export const metadata: Metadata = {
   title: '회원 가입 - 멋사컴',
@@ -12,6 +15,25 @@ export const metadata: Metadata = {
 }
   
 export default function Page() {
+
+  const { register, handleSubmit, formState: { errors }, setError } = useForm<UserForm>();
+
+  const addUser = async (formData: UserForm) => {
+
+    formData.type = 'user';
+    const resData = await signup(formData);
+
+    if(resData.ok){
+      alert(`${resData.item.name}님 회원가입을 환영합니다.`);
+    }else{ // API 서버의 에러 메시지 처리
+      if('errors' in resData){
+        resData.errors.forEach(error => setError(error.path, { message: error.msg }));
+      }else if(resData.message){
+        alert(resData.message);
+      }
+    }
+  };
+
   return (
     <main className="min-w-80 flex-grow flex items-center justify-center">
       <div className="p-8 border border-gray-200 rounded-lg w-full max-w-md dark:bg-gray-600 dark:border-0">

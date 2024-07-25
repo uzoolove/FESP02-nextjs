@@ -1,4 +1,4 @@
-export interface User {
+export interface UserData {
   _id: number,
   email: string,
   name: string,
@@ -16,8 +16,17 @@ export interface User {
   updatedAt: string,
 }
 
-export type UserInToken = Required<Pick<User, '_id' | 'name'>> & Pick<User, 'profile'> & {
+export type UserInToken = Required<Pick<UserData, '_id' | 'name'>> & Pick<UserData, 'profile'> & {
   accessToken: string,
   refreshToken: string,
-}; 
+};
+
+export type UserForm = {
+  type: 'user' | 'seller',
+  name: string,
+  email: string,
+  password: string,
+  attach?: string | string[],
+  profileImage?: string,
+};
 

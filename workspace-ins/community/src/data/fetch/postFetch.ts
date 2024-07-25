@@ -1,8 +1,8 @@
 import { ApiRes, MultiItem, Post, SingleItem } from "@/types";
 
-const SERVER = process.env.API_SERVER;
-const LIMIT = process.env.LIMIT;
-const DELAY = process.env.DELAY;
+const SERVER = process.env.NEXT_PUBLIC_API_SERVER;
+const LIMIT = process.env.NEXT_PUBLIC_LIMIT;
+const DELAY = process.env.NEXT_PUBLIC_DELAY;
 
 export async function fetchPosts(
     type: string | undefined, 
