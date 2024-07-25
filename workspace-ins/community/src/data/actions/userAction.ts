@@ -45,18 +45,3 @@ export async function signup(formData: UserForm){
 
   return resData;
 }
-
-export async function login(formData: FormData): Promise<ApiResWithValidation<SingleItem<UserData>, LoginForm>>{
-  const loginData = {
-    email: formData.get('email'),
-    password: formData.get('password')
-  };
-  const res = await fetch(`${SERVER}/users/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(loginData)
-  });
-  return res.json();
-}

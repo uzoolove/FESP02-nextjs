@@ -1,3 +1,6 @@
+// 서버 액션 정의
+'use server';
+
 import { login } from "./userAction";
 
 // email/password 로그인
