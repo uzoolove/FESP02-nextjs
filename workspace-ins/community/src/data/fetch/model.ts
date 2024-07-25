@@ -1,4 +1,4 @@
-import { Post, PostComment, User } from "@/types";
+import { Post, PostComment, UserData } from "@/types";
 import moment from "moment";
 import { Collection, Db, MongoClient } from "mongodb";
 
@@ -9,7 +9,7 @@ interface Seq {
 
 interface CommunityDb extends Db{
   post: Collection<Post>,
-  user: Collection<User>,
+  user: Collection<UserData>,
   seq: Collection<Seq>,
 }
 

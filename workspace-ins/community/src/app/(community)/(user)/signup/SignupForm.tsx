@@ -1,19 +1,34 @@
+'use client';
+
 import InputError from "@/components/InputError";
 import Submit from "@/components/Submit";
 import { signup } from "@/data/actions/userAction";
 import { UserForm } from "@/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 export default function SignupForm() {
+  const router = useRouter();
 
   const { register, handleSubmit, formState: { errors }, setError } = useForm<UserForm>();
 
   const addUser = async (formData: UserForm) => {
-    formData.type = 'user';
+    
+    // const userData = new FormData();
+    // Object.entries(formData).forEach(([key, value]) => {
+    //   if(key !== 'attach'){
+    //     userData.append(key, value as string);
+    //   }      
+    // });
+    // userData.append('attach', formData.attach as File);
+
+    // formData.type = 'user';
+
     const resData = await signup(formData);
     if(resData.ok){
       alert(`${resData.item.name}님 회원가입을 환영합니다.`);
+      router.push('/');
     }else{ // API 서버의 에러 메시지 처리
       if('errors' in resData){
         resData.errors.forEach(error => setError(error.path, { message: error.msg }));
@@ -24,7 +39,7 @@ export default function SignupForm() {
   };
 
   return (
-    <form action="/" onSubmit={ handleSubmit(addUser) }>
+    <form onSubmit={ handleSubmit(addUser) }>
       <div className="mb-4">
         <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="name">이름</label>
         <input

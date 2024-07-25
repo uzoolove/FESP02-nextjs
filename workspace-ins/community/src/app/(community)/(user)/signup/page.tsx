@@ -9,6 +9,7 @@ export const metadata: Metadata = {
     url: '/user/signup'
   }
 }
+
   
 export default function Page() {
   return (

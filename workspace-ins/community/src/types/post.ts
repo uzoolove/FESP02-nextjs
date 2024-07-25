@@ -1,9 +1,9 @@
-import { User } from "./user"
+import { UserData } from "./user"
 
 export interface PostComment {
   _id: number,
   user_id: number,
-  user: User,
+  user: UserData,
   content: string,
   like: number,
   createdAt: string,
@@ -15,7 +15,7 @@ export interface Post {
   type?: string,
   title: string,
   content: string,
-  user: Pick<User, '_id' | 'name' | 'profileImage'>,
+  user: Pick<UserData, '_id' | 'name' | 'profileImage'>,
   views: number,
   repliesCount: number,
   replies?: PostComment[],
