@@ -5,6 +5,11 @@ import { ApiResWithValidation, SingleItem, UserData, UserForm } from "@/types";
 
 const SERVER = process.env.NEXT_PUBLIC_API_SERVER;
 
+type LoginForm = {
+  email: string,
+  password: string,
+};
+
 export async function signup(formData: UserForm){
   // 이미지 업로드
   if(formData.attach !== undefined && formData.attach.length > 0){
@@ -39,4 +44,19 @@ export async function signup(formData: UserForm){
   const resData: ApiResWithValidation<SingleItem<UserData>, UserForm> = await res.json();
 
   return resData;
+}
+
+export async function login(formData: FormData): Promise<ApiResWithValidation<SingleItem<UserData>, LoginForm>>{
+  const loginData = {
+    email: formData.get('email'),
+    password: formData.get('password')
+  };
+  const res = await fetch(`${SERVER}/users/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(loginData)
+  });
+  return res.json();
 }
