@@ -2,13 +2,14 @@
 
 import { signOut } from "next-auth/react";
 import Submit from "../Submit";
+import Image from "next/image";
 
 export default function LoginInfo({ name, image }: { name: string, image: string | null | undefined }){
   return (
     <form action={ () => signOut() }>
       <p className="flex items-center">
         { image &&
-          <img 
+          <Image 
             className="w-8 rounded-full mr-2" 
             src={image}
             width="40" 

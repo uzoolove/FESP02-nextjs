@@ -1,7 +1,7 @@
 'use client';
 
 import Submit from "@/components/Submit";
-import { signInWithCredentials } from "@/data/actions/authAction";
+import { signInWithCredentials, signInWithGithub, signInWithGoogle } from "@/data/actions/authAction";
 import Link from "next/link";
 
 export default function LoginForm() {
@@ -32,6 +32,8 @@ export default function LoginForm() {
       </div>
       <div className="mt-10 flex justify-center items-center">
         <Submit>로그인</Submit>
+        <Submit formAction={signInWithGithub}>깃허브</Submit>
+        <Submit formAction={signInWithGoogle}>구글</Submit>
         <Link href="/signup" className="ml-8 text-gray-800 hover:underline">회원가입</Link>
       </div>
     </form>

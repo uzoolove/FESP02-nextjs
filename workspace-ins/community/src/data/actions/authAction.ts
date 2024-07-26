@@ -21,9 +21,9 @@ export async function signInWithCredentials(formData: FormData){
 }
 
 export async function signInWithGoogle(formData: FormData){
-
+  await signIn('google', { redirectTo: '/' });
 }
 
 export async function signInWithGithub(formData: FormData){
-  
+  await signIn('github', { redirectTo: '/' });
 }
