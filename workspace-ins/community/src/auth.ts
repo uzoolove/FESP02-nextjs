@@ -21,10 +21,12 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
         const resJson = await res.json();
         if(resJson.ok){
           const user = resJson.item;
+          console.log(user)
           return {
             id: user._id,
             name: user.name,
             email: user.email,
+            type: user.type,
             image: user.profileImage && (SERVER + user.profileImage),
             accessToken: user.token.accessToken,
             refreshToken: user.token.refreshToken,
@@ -57,13 +59,14 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
     async signIn({ user }){
       // user에 들어 있는 사용자 정보를 이용해서 최초에 한번은 회원 DB에 저장(회원가입)
       // 가입된 회원일 경우 자동으로 로그인 처리
-
+      console.log('signIn.user', user);
       return true;
     },
 
     // 로그인 성공한 회원 정보로 token 객체 설정
     // 최초 로그인시 user 객체 전달, 
     async jwt({ token, user }){
+      console.log('jwt.user', user);
       // 토큰 만료 체크, refreshToken으로 accessToken 갱신
       // refreshToken도 만료되었을 경우 로그아웃 처리
       if(user?.accessToken){
@@ -76,6 +79,7 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
     // 클라이언트에서 세션 정보 요청시 호출
     // token 객체 정보로 session 객체 설정
     async session({ session, token }){
+      console.log('session.user', session.user);
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
       return session;

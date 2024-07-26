@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function LoginForm() {
   return (
-    <form action={signInWithCredentials}>
+    <form>
       <div className="mb-4">
         <label className="block text-gray-700 dark:text-gray-200 mb-2" htmlFor="email">이메일</label>
         <input
@@ -31,7 +31,7 @@ export default function LoginForm() {
         <Link href="#" className="block mt-6 ml-auto text-gray-500 text-sm dark:text-gray-300 hover:underline">비밀번호를 잊으셨나요?</Link>
       </div>
       <div className="mt-10 flex justify-center items-center">
-        <Submit>로그인</Submit>
+        <Submit formAction={signInWithCredentials}>로그인</Submit>
         <Submit formAction={signInWithGithub}>깃허브</Submit>
         <Submit formAction={signInWithGoogle}>구글</Submit>
         <Link href="/signup" className="ml-8 text-gray-800 hover:underline">회원가입</Link>
