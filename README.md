@@ -1385,3 +1385,782 @@ export default async function Page({
   )
 }
 ```
+
+# 6. 서버 컴포넌트와 클라이언트 컴포넌트
+* 렌더링: 리액트 컴포넌트(JS + JSX)를 호출해서 HTML 코드를 만드는 작업
+
+## 6.1 클라이언트와 서버
+### 렌더링 환경
+* 클라이언트: 웹 브라우저
+* 서버: 클라이언트의 요청을 받아서 응답을 보내는 컴퓨터
+* 클라이언트 사이드 렌더링(Client Side Rendering, CSR): 렌더링의 주체가 클라이언트
+* 서버 사이드 렌더링(Server Side Rendering, SSR): 렌더링의 주체가 서버
+
+### 요청-응답 수명주기
+1. 사용자
+  - 주소창에 주소 입력, 링크나 submit 버튼을 클릭하는 액션을 발생시킴
+2. 클라이언트
+  - 클라이언트가 요청 헤더와 바디를 만들어 서버에 HTTP 요청을 보냄
+3. 서버
+  - 클라이언트의 요청 헤더와 바디를 꺼내고 분석해서 요청을 처리한 결과를 응답헤더와 바디에 포함해서 클라이언트에 보냄 
+4. 클라이언트
+  - 서버로부터 받은 응답 데이터를 꺼내서 사용자에게 적절한 UI로 보여줌
+5. 사용자
+  - 페이지와 상호 작용할 수 있는 상태
+
+### 네트워크 경계
+* 클라이언트(웹 브라우저), 서버(Next.js), API 서버, DB 등 서로 다른 환경을 구분하는 개념
+* React는 클라이언트 사이드 렌더링으로 동작
+* Next.js는 클라이언트, 서버 사이드 렌더링으로 동작
+
+## 6.2 웹 개발의 변천사
+### 전통적인 웹 애플리케이션
+* JSP, Servlet, ASP, PHP 등으로 개발
+* 브라우저는 페이지 단위로 요청을 보내며 웹서버는 완성된 페이지를(HTML) 응답
+* 화면(View, UI)을 만드는 역할은 백엔드의 웹서버와 애플리케이션 서버가 전담
+* 브라우저 화면의 일부만 갱신이 필요한 경우에도 페이지 전체를 서버에 요청해서 받아오므로 매번 리플래시가 발생해서 UX에 부정적
+
+### 멀티 페이지 애플리케이션
+* Ajax, jQuery 등 클라이언트 자바스크립트 API 사용
+* 서버에 페이지 단위로 요청하지만 같은 페이지 내에서의 화면 갱신은 Ajax를 이용해서 서버와 통신한후 DOM API로 리플래시 없이 화면 갱신
+* 전체 화면 리플래시가 줄어들어서 사용자 UX에 긍정적
+
+### 단일 페이지 애플리케이션(SPA, Single Page Application)
+* 하나의 HTML 페이지에서 애플리케이션의 모든 화면과 기능 제공
+* 브라우저가 최초로 접속했을 때 어플리케이션에 필요한 모든 자바스크립트 코드를 다운로드 받고 페이지 이동시 history API를 이용해서 리플래시 없어 모든 화면을 서비스
+* 화면(View, UI)를 만드는 역할을 웹 브라우저의 자바스크립트가 담당
+* 단점
+  - 모든 기능을 한 페이지에서 다 구현하다 보니 상태(데이터) 관리가 어려움
+  - 자바스크립트에서 HTML 코드를 생성해야 하므로 개발 생산성 저하
+  - 브라우저의 DOM을 자주 갱신하다보면 성능 저하 발생
+* React의 특징
+  - 컴포넌트 별로 상태 관리가 가능하고 글로벌 상태 관리를 지원하는 서드파티 라이브러리가 많음
+  - JSX를 이용해서 HTML 생산성이 높음
+  - 가상 DOM을 이용해서 성능 저하 최소
+* React의 단점
+  - 최초에 로딩할 자바스크립트 용량이 커서 초기 화면을 보여주기까지의 시간이 오래 걸림
+
+## 6.3 서버 컴포넌트
+### CSR vs. SSR
+#### CSR(Client Side Rendering)
+* 리액트의 동작 방식
+* 클라이언트가 최초로 접속하면 head에 css, js 파일이 정의되어 있고 body가 비어있는 HTML 응답
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+    <script type="module" crossorigin src="/assets/index-BzyLkkVx.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-UJILNUew.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+```
+
+* 클라이언트가 HTML을 파싱하면서 css, js 파일을 서버에 추가로 요청하고 다운로드가 완료되면 js 파일을 이용해서 HTML 생성
+* 이후 페이지 이동 시 처음에 다운로드 받은 js 파일에서 모든 HTML 생성하고 동적으로 화면을 바꾸므로 SPA로 동작
+  - 초기 js 로딩에 시간이 걸림
+  - SEO 안됨
+
+#### SSR(Server Side Rendering)
+* 초기 페이지 로딩 시간과 SEO(Search Engine Optimization)를 개선하기 위해 서버에서 HTML을 생성하고 클라이언트에 전송
+1. 초기 페이지 로드
+  - 사용자가 웹사이트를 처음 접속할 때 서버는 해당 페이지의 HTML을 생성하고(렌더링) 브라우저에 응답(SSR)
+2. 자바스크립트 다운로드
+  - 브라우저는 서버로부터 받은 HTML을 파싱하면서 현재 페이지의 동작에 필요한 자바스크립트를 다운로드 후 실행
+3. 정적인 페이지 뷰
+  - 자바스크립트 다운로드 중에 HTML 파싱이 완료되면 즉, DOM 생성 후 화면에 출력하면 정적인 상태의 화면을 사용자가 볼 수 있음
+  - 전체 내용이 로드되기 전이라도 사용자가 링크를 클릭해서 다른 페이지로 이동을 할 수 있음
+4. 하이드레이션
+  - 다운로드 받은 자바스크립트를 이용해서 가상 DOM을 만들고 실제 DOM과 동기화 시키고 이벤트 추가 등의 작업이 끝나면 사용자와 상호작용 가능한 상태가 됨
+5. 리액트 앱으로 동작
+  - 하이드레이션이 끝나면 일반적인 리액트 앱으로 동작(CSR)
+
+* SSR을 지원하는 리액트 프레임워크로 Getsby, Remix, Next.js 등이 있음
+
+#### SSR의 장점
+* 첫 페이지 로딩이 빨라짐
+  - CSR은 자바스크립트를 다운로드 한 후 리액트 컴포넌트로 렌더링되어야 화면에 보임
+  - SSR은 일단 HTML 먼저 응답하므로 정적인 레이아웃을 바로 보여줄 수 있음
+* 효율적인 SEO 가능
+  - 정적으로 응답한 HTML에 검색엔진에 필요한 정보를 포함시키기 때문에 검색엔진이 자바스크립트를 실행하지 않더라도 필요한 정보를 바로 확인 가능
+
+### SSR vs. RSC(React Server Component, React18)
+* SSR은 페이지 단위, RSC는 컴포넌트 단위
+* Next.js의 page 라우터가 SSR 방식, app 라우터가 RSC 방식
+* SSR은 page 단위에서만 서버 관련 함수 사용
+  - getServerSideProps 내에서 데이터 받아오고 데이터를 렌더링할 컴포넌트에는 props로 전달
+* RSC는 데이터를 렌더링할 컴포넌트에서 직접 서버 관련 함수 사용
+  - 관심사 분리: page 컴포넌트는 UI, 데이터는 하위 컴포넌트에서 직접 생성
+  - props 드릴링 없음
+  - 컴포넌트 단위로 SSR 전략을 선택할 수 있음
+    + SSR(Server Side Rendering)
+      - SSG(Static Site Generation)    
+      - ISR(Incremental Static Regeneration)
+* 페이지 내에서 자주 바뀌는 컴포넌트가 하나 있으면 SSR은 해당 페이지에 접속할 때 매번 모든 컴포넌트를 동적으로 서버에서 렌더링 함
+  - RSC는 해당 컴포넌트만 동적으로 렌더링 함
+
+#### Next.js RSC의 장점
+* 백엔드 데이터 리소스(DB 등)에 직접 액세스 가능
+  - 백엔드 개발 가능
+  - RSC가 없던 Next.js 13 이전에는 페이지 루트에서만 백엔드 접근이 가능했었지만 RSC는 컴포넌트 단위의 백엔드 접근이 가능
+* 클라이언트에서 여러번 데이터 요청을 하지 않고 한번의 요청으로 모든 데이터를 가져올 수 있음
+  - 폭포수 현상을 줄임
+  - Next.js 서버와 데이터 리소스(DB 등)가 보통 지리적으로 가까운 곳에 있기 때문에 네트워크 지연시간을 줄임
+* API 키나 액세스 토큰 같은 민감한 정보가 클라이언트에 노출되지 않음
+* fetch API는 자동으로 서버측에 캐싱이되므로 여러 클라이언트의 동일한 요청에 대해 데이터 리소스를 다시 가져올 필요 없이 캐시된 컨텐츠를 제공해서 빠르고 서버 자원 낭비가 줄어듬
+* 클라이언트로 번들링되어 전송되는 자바스크립트 크기가 줄어듬
+  - 서버에서만 실행되기 때문에 클라이언트로 코드를 전송할 필요 없음(로직, 라이브러리)
+* FCP(First Contentful Paint)가 단축됨
+  - HTML을 서버에서 만들어 주기때문에 인터렉션에 필요한 자바스크립트를 실행하기 전이라도 화면에 보여줄 수 있음
+* SEO에 유리
+* 렌더링 작업을 청크로 분할해서 스트리밍하면 클라이언트는 전체 HTML을 다 받기전에도 페이지의 일부를 보여줄 수 있음
+* 코드 자동 분할
+
+### 서버 컴포넌트 vs. 클라이언트 컴포넌트
+#### 서버 컴포넌트
+* 오직 서버에서만 실행되는 컴포넌트
+* Next.js의 app 라우터를 사용하면 모든 컴포넌트는 기본으로 서버 컴포넌트가 됨
+
+##### 서버 컴포넌트의 렌더링
+1. 라우트 세그먼트를 기준으로 각 세그먼트의 렌더링 작업 시작
+  - /posts/3일 경우 /posts, /3 두개의 세그먼트로 나뉨
+2. 각 라우트 세그먼트의 대상 컴포넌트는 렌더링에 필요한 데이터를 만들고(fetch) RSC Payload 생성
+  - loading 파일이 있거나 Suspense가 있다면 해당 위치에 fallback UI를 렌더링
+    + 이후 데이터 패칭이 완료되면 추가 데이터를 스트리밍 방식으로 전송
+  - RSC Payload: 서버에서 렌더링된 컴포넌트 트리 구조(클라이언트 컴포넌트가 들어갈 자리 표시), 클라이언트에서 사용할 자바스크립트 파일 경로, 서버 컴포넌트에서 클라이언트 컴포넌트에 전달하는 props 데이터를 표현한 특수한 포맷의 데이터
+3. RSC Payload를 기반으로 HTML 생성
+4. HTML과 RSC Payload를 클라이언트에 전송
+  - HTML은 브라우저 자체의 렌더링으로 빠르게 화면 표시
+  - HTML만 가지고 화면을 보여줬기 때문에 사용자와의 인터렉션이 되지 않는 상태
+5. 인터렉션을 위한 하이드레이션 시작
+  - 클라이언트 컴포넌트 다운로드
+  - 리엑트 앱으로 동작시키기 위해 RSC Payload 정보를 이용해서 Virtual DOM을 생성, Real DOM과 동기화 시키고 이벤트 핸들러를 등록해서 사용자와 인터렉션이 가능한 상태로 만듬
+
+#### 클라이언트 컴포넌트
+* 서버와 클라이언트에서 실행되는 컴포넌트
+* 파일의 첫줄에 'use client' 지시어 추가
+* 클라이언트에서도 실행되는 컴포넌트로 브라우저에서만 할 수 있는 작업이 필요한 경우 클라이언트 컴포넌트로 만들어야 함
+  - 이벤트 리스너, DOM 직접 핸들링
+  - useState, useEffect 등 상태와 라이프사이클 관련 기능
+  - 브라우저 API(window, document, localStorage, geolocation 등) 사용
+* 클라이언트 컴포넌트가 import해서 사용하는 모든 자식 컴포넌트는 암묵적으로 클라이언트 컴포넌트가 되고 자바스크립트 번들에 포함되어 클라이언트로 전송됨
+* 클라이언트 컴포넌트가 서버 컴포넌트를 import 할 수 없지만 children으로 포함하는건 가능
+
+##### 클라이언트 컴포넌트의 렌더링
+* 페이지 로드일 경우
+  - 초기 접속이나 새로고침 등으로 페이지가 로드될 때
+  - 서버는 서버 컴포넌트와 클라이언트 컴포넌트 모두 렌더링해서 HTML 생성 후 응답
+* 페이지는 변경되지 않고 리렌더링 되는 경우
+  - 새로고침 없이 클라이언트에서 렌더링
+
+### Next.js의 RSC(React Server Component) 렌더링 방식
+#### 정적 렌더링(Static Rendering)
+* SSG(Static Site Generation)
+* 빌드 시점에 서버측에서 HTML을 생성하고 클라이언트 요청시 미리 생성된 HTML을 바로 응답하므로 빠름
+* 데이터가 바뀌지 않는 정적인 페이지에 사용
+#### 동적 렌더링(Dynamic Rendering)
+* 클라이언트 요청시 매번 HTML을 생성해서 응답하므로 느림
+* 최신 데이터를 반영해야 하거나 사용자 맞춤형 데이터가 있는 동적인 페이지에 사용
+#### 스트리밍(Streaming)
+* 서버의 작업이 완료되지 않더라도 응답이 여러 청크로 분할되어 클라이언트로 스트리밍 됨
+* 클라이언트는 전체 렌더링이 완료되기 전에 페이지의 일부를 즉시 볼 수 있음
+* 앱 라우터를 사용하면 기본으로 동작
+#### ISR(Imcremental Static Regeneration)
+* 정적으로 렌더링 된 이후에 일정 시간이 지나면 다시 서버에서 렌더링 됨
+  - revalidate 옵션 사용
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fsequential-parallel-data-fetching.png&w=1920&q=75">
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fserver-rendering-with-streaming.png&w=1920&q=75">
+
+
+
+
+
+
+## 6.4 서버, 클라이언트 구성 패턴
+
+
+## 6.5 Edge와 Node.js 런타임
+* Edge는 Node.js의 경량화 버전으로 빠르지만 Node.js의 fs 모듈이나 모든 npm 패키지를 지원하지 않음
+* 빠른 시작을 위해 최소한의 리소스를 사용하므로 패키지 파일 사이즈가 제한될 수 있음
+* Static Rendering 지원 안함
+* layout이나 page에서 정의
+  ```tsx
+  export const runtime = 'edge' // 'nodejs' (default) | 'edge'
+  ```
+
+# 7. 캐싱
+
+### 데이터 캐싱
+* fetch의 반환값을 서버의 데이터 캐시에 자동으로 캐시
+  - 빌드시, 요청시 데이터를 캐시하고 재사용
+    ```ts
+    // 'force-cache'는 기본값이므로 생략 가능
+    fetch('https://api.fesp.shop/posts', { cache: 'force-cache' });
+    ```
+  - 캐시되지 않는 예외 사항
+    + 서버 액션
+    + GET 방식 이외의 라우트 핸들러
+
+* 캐시 미적용
+  - fetch의 cache: 'no-store' 속성 사용
+    ```tsx
+    fetch(`https://api.fesp.shop/posts`, { cache: 'no-store' });
+    ```
+
+  - layout, page의 라우트 세그먼트 설정 옵션을 사용하면 layout이나 page 내의 모든 요청에 적용됨
+    ```tsx
+    export const dynamic = 'force-dynamic'; // 외부 라이브러리에서도 캐시 안하도록 설정됨
+    ```
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fdata-cache.png&w=1920&q=75">
+
+#### 캐시 미적용 옵션
+```tsx
+// fetch의 { cache: 'no-store' } 옵션
+fetch(`https://api.fesp.shop/posts`, { cache: 'no-store' });
+
+// fetch의 { next: { revalidate: 0 } } 옵션
+fetch('https://api.fesp.shop/posts', { next: { revalidate: 0 } });
+
+// POST 라우터 핸들러 내부의 fecth 요청 
+export async function POST(request: Request) {
+  fetch('https://api.fesp.shop/posts');
+}
+
+// header나 cookies 속성을 사용
+// header나 cookie를 꺼내는 작업은 동적 함수이므로 해당 컴포넌트는 동적 렌더링이 됨
+const cookieStore = cookies();
+const headersList = headers();
+
+// 라우트 세그먼트 설정 옵션의 dynamic 속성으로 force-dynamic 사용
+export const dynamic = 'force-dynamic';
+
+// 라우트 세그먼트 설정 옵션의 fetchCache 속성으로 *-no-store 사용
+export const fetchCache = 'force-no-store'; // 캐시 무시하고 항상 새로운 데이터 가져옴
+export const fetchCache = 'only-no-store'; // 캐시가 없을 경우에만 새로운 데이터 가져옴
+export const fetchCache = 'default-no-store'; // 기본적으로 캐시를 사용안함. 다른 옵션으로 활성화 가능
+```
+
+* 미들웨어에서는 캐시 안됨
+* 데이터 캐시와 fetch 메모이제이션의 차이점
+  - 둘다 프로덕션에서만 동작
+  - 데이터 캐시는 여러 요청에서 재사용 됨
+  - 메모이제이션은 컴포넌트 트리가 렌더링 되는 동안에만 재사용 됨
+    + 렌더링 될때 호출되는 여러 컴포넌트가 동일한 URL과 옵션으로 fetch 요청을 보내면 최초 요청의 응답을 저장하고 이후의 요청에는 저장된 응답이 사용된 후 렌더링이 끝나면 삭제됨
+  - 데이터 캐시는 비활성화 하거나 재검증 시 서버에 다시 요청
+  - 메모이제이션은 임시 캐시이므로 다음 렌더링 작업이 발생하면 항상 서버에 다시 요청
+  - 메모이제이션 -> 데이터 캐시 -> 데이터 소스 순으로 확인
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Frequest-memoization.png&w=1920&q=75">
+
+#### 캐시 재검증
+* 데이터 캐시를 제거하고 최신 데이터를 다시 가져오는 프로세스
+* 재검증 시도시 오류가 발생하면 마지막 성공한 데이터 캐시를 사용하고 다음 요청에서 재검증을 다시 시도
+
+##### 시간 기반 재검증
+* next.revalidate 옵션으로 초단위 시간 설정
+```tsx
+fetch('https://api.fesp.shop/posts', { next: { revalidate: 3600 } });
+```
+
+* 라우트 세그먼트 설정 옵션의 revalidate 값을 지정
+```tsx
+export const revalidate = 3600;
+```
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Ftime-based-revalidation.png&w=1920&q=75">
+
+##### 요청시 재검증
+* revalidateTag()
+  - 지정한 태그의 서버 데이터 캐시 무효화
+* revalidatePath()
+  - 지정한 경로의 서버 데이터 캐시 무효화
+
+```tsx
+// /posts/page.tsx
+const res = await fetch(`https://api.fesp.shop/posts?type=qna`, {
+  next: { tags: ['posts', 'qna'] }
+});
+revalidateTag('posts'); // posts 태그가 붙어있는 캐시 삭제
+revalidateTag('qna'); // qna 태그가 붙어있는 캐시 삭제
+revalidatePath('/posts'); // /posts URL의 캐시 삭제
+```
+
+<img src="https://nextjs.org/_next/image?url=%2Fdocs%2Flight%2Fon-demand-revalidation.png&w=1920&q=75">
+
+
+# 8. 최적화
+* 애플리케이션의 속도와 응답성을 향상시키기 위해 설계된 자양한 내장 최적화 기능을 제공
+
+## 이미지
+* 자동으로 이미지 최적화 기능을 갖춘 Image 컴포넌트
+* 크기 최적화
+  - 각 장치에 맞는 올바른 크기의 이미지를 자동으로 제공
+  - WebP, AVIF 같은 현대 이미지 포맷을 사용
+* 시각적 안정성
+  - 이미지가 로딩될 때 발생하는 레이아웃 이동 현상 방지(width, height 속성 명시)
+* 더 빠른 페이지 로드
+  - 이미지가 뷰포트에 들어올 때 로드
+  - 선택적인 blurDataURL 속성으로 블러업 플레이스 홀드 지정
+* 유연성
+  - 원격 서버의 이미지를 요청에 따라 크기 조정
+
+* 외부 이미지 로딩시 next.config.mjs 설정 추가
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '',
+        pathname: '/files/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.fesp.shop',
+        port: '',
+        pathname: '/files/**',
+      },
+    ],
+  },
+};
+
+export default nextConfig;
+```
+
+## 스크립트
+### 외부 스크립트 로딩
+* layout이나 page에서 외부 스크립트 로딩
+* layout에서 외부 스크립트 로딩시 동일 레이아웃 내의 여러 페이지 이동에도 한번만 로딩됨
+* app/map/layout.tsx
+```tsx
+import Script from 'next/script';
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <>
+      <section>{children}</section>
+      <Script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=abc123" />
+    </>
+  )
+}
+```
+
+### 인라인 스크립트
+* 스크립트를 추적하고 최적화 하기 위해서 id 속성 부여
+```tsx
+<Script id="show-banner">
+  {`document.getElementById('banner').classList.remove('hidden')`}
+</Script>
+```
+
+## 정적 컨텐츠
+* public 폴더 아래에 위치
+* public 폴더는 코드에서 '/'로 접근
+
+# 9. 인증
+## Authentication, 인증
+* 신원 확인
+* 아이디, 비밀번호로 로그인
+* 구글, 네이버, 카카오 로그인
+
+### 전략
+* OAuth/OpenID Connect(OIDC)
+  - 소셜 로그인, Single Sign-On(SSO)
+* 로그인(이메일 + 비밀번호)
+  - 일반적인 웹 애플리케이션의 인증 방법
+* 비밀번호 없는 토큰 기반 인증
+  - 일회성 이메일 링크나 SMS 링크 등을 통해서 인증
+  - 비밀번호 재설정 링크
+* Passkeys/WebAuthn
+  - 안전하지만 구현 복잡
+
+### 인증 구현
+* 로그인 페이지
+```tsx
+import { authenticate } from '@/app/lib/actions'
+ 
+export default function Page() {
+  return (
+    <form action={authenticate}>
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+  )
+}
+```
+
+* 인증 공급자의 API 호출
+```ts
+'use server'
+ 
+import { signIn } from '@/auth'
+ 
+export async function authenticate(_currentState: unknown, formData: FormData) {
+  try {
+    await signIn('credentials', formData)
+  } catch (error) {
+    if (error) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          return 'Invalid credentials.'
+        default:
+          return 'Something went wrong.'
+      }
+    }
+    throw error
+  }
+}
+```
+
+* 결과 처리
+```tsx
+'use client'
+ 
+import { authenticate } from '@/app/lib/actions'
+import { useFormState, useFormStatus } from 'react-dom'
+ 
+export default function Page() {
+  const [errorMessage, dispatch] = useFormState(authenticate, undefined)
+ 
+  return (
+    <form action={dispatch}>
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <div>{errorMessage && <p>{errorMessage}</p>}</div>
+      <LoginButton />
+    </form>
+  )
+}
+ 
+function LoginButton() {
+  const { pending } = useFormStatus()
+ 
+  const handleClick = (event) => {
+    if (pending) {
+      event.preventDefault()
+    }
+  }
+ 
+  return (
+    <button aria-disabled={pending} type="submit" onClick={handleClick}>
+      Login
+    </button>
+  )
+}
+```
+
+## Authorization, 인가: 권한 확인
+* 인증 받은 사용자가 특정 작업에 대해 수행이 가능한지 여부를 확인
+  - 게시묵 목록, 상세 조회는 누구나 가능
+  - 게시물 수정, 삭제는 본인의 게시물에 한해서만 가능
+  - 판매 회원만 상품 등록 가능
+* Next.js의 미들웨어를 이용해서 구현
+
+### 미들웨어 구현 방법
+#### 미들웨어 설정
+* 루트 디렉토리에 middleware.ts 파일 생성
+* 토큰 확인 등을 통해 사용자 엑세스를 승인하는 로직 작성
+
+#### 보호된 경로 정의
+* 미들웨어의 matcher 옵션으로 인가가 필요하지 않은 경로를 지정
+
+#### 미들웨어 로직 작성
+* 인증 여부를 확인하는 로직 작성
+
+#### 무단 접근 처리
+* 승인되지 않은 사용자는 오류 페이지를 보여주거나 로그인 페이지로 이동
+
+```jsx
+import type { NextRequest } from 'next/server'
+ 
+export function middleware(request: NextRequest) {
+  const currentUser = request.cookies.get('currentUser')?.value
+ 
+  if (currentUser && !request.nextUrl.pathname.startsWith('/dashboard')) {
+    return Response.redirect(new URL('/dashboard', request.url))
+  }
+ 
+  if (!currentUser && !request.nextUrl.pathname.startsWith('/login')) {
+    return Response.redirect(new URL('/login', request.url))
+  }
+}
+ 
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+}
+```
+
+```tsx
+import { redirect } from 'next/navigation'
+ 
+export default function Page() {
+  // Logic to determine if a redirect is needed
+  const accessDenied = true
+  if (accessDenied) {
+    redirect('/login')
+  }
+ 
+  // Define other routes and logic
+}
+```
+
+### 리소스 보호
+#### 서버 액션
+```jsx
+'use server'
+ 
+// ...
+ 
+export async function serverAction() {
+  const session = await getSession()
+  const userRole = session?.user?.role
+ 
+  // Check if user is authorized to perform the action
+  if (userRole !== 'admin') {
+    throw new Error('Unauthorized access: User does not have admin privileges.')
+  }
+ 
+  // Proceed with the action for authorized users
+  // ... implementation of the action
+}
+```
+
+#### 라우트 핸들러
+```tsx
+export async function GET() {
+  // User authentication and role verification
+  const session = await getSession()
+ 
+  // Check if the user is authenticated
+  if (!session) {
+    return new Response(null, { status: 401 }) // User is not authenticated
+  }
+ 
+  // Check if the user has the 'admin' role
+  if (session.user.role !== 'admin') {
+    return new Response(null, { status: 403 }) // User is authenticated but does not have the right permissions
+  }
+ 
+  // Data fetching for authorized users
+}
+```
+
+#### 서버 컴포넌트
+```tsx
+export default async function Dashboard() {
+  const session = await getSession()
+  const userRole = session?.user?.role // Assuming 'role' is part of the session object
+ 
+  if (userRole === 'admin') {
+    return <AdminDashboard /> // Component for admin users
+  } else if (userRole === 'user') {
+    return <UserDashboard /> // Component for regular users
+  } else {
+    return <AccessDenied /> // Component shown for unauthorized access
+  }
+}
+```
+
+## Auth.js
+* 예전에는 NextAuth.js 였다가 5.0부터 Auth.js로 명칭 변경
+  - OAuth2.0, OIDC 등을 지원
+
+### 설치
+```sh
+npm install next-auth@beta
+```
+
+### AUTH_SECRET 환경 변수 생성
+* .env.local 파일에 AUTH_SECRET 환경변수 생성됨
+```sh
+npx auth secret
+# openssl rand -base64 33 명령으로 생성하는 효과
+```
+
+### Auth.js 구성 파일 생성
+* src/auth.ts
+```ts
+import NextAuth from "next-auth";
+ 
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  providers: [],
+})
+```
+
+#### NextAuth() 인자값
+* providers: Credentials, Google, GitHub 등의 인증 공급자를 지정
+* session: 세션 관리 방식을 지정
+* pages: 사용자 정의 페이지 경로를 지정하며, 로그인 페이지의 기본값은 /auth/signin
+* callbacks: 인증 및 세션 관리 중 호출되는 각 핸들러를 지정
+  - signIn: 사용자 로그인을 시도했을 때 호출되며, true를 반환하면 로그인 성공, false를 반환하면 로그인 실패로 처리
+  - redirect: 페이지 이동 시 호출되며, 반환하는 값은 리다이렉션될 URL
+  - jwt: JWT가 생성되거나 업데이트될 때 호출되며, 반환하는 값은 암호화되어 쿠키에 저장됨
+  - session: jwt 콜백이 반환하는 token을 받아, 세션이 확인될 때마다 호출되며, 반환하는 값은 클라이언트에서 확인할 수 있음(2번 이상 호출될 수 있음)
+
+#### callbacks 핸들러 호출 순서
+* 로그인: signIn > redirect > jwt > session
+* 세션 업데이트: jwt > session
+* 세션 확인: session
+
+#### NextAuth() 리턴값
+* handlers: 프로젝트의 인증 관리를 위한 API 라우트(GET, POST 함수) 객체
+* signIn: 사용자 로그인을 시도하는 비동기 함수
+* signOut: 사용자 로그아웃을 시도하는 비동기 함수
+* auth: 세션 정보를 반환하는 비동기 함수
+
+
+# 구글 로그인
+* <https://next-auth.js.org/providers/google> 참고
+
+## 키발급
+### 구글 클라우드의 API 서비스로 이동
+* https://console.cloud.google.com/apis
+
+### OAuth 동의 화면
+* User Type: 외부
+* 앱 이름: 지디컴
+* 범위 추가 또는 삭제
+  - userinfo.email
+  - userinfo.profile
+  - openid
+
+### 사용자 인증 정보
+* 사용자 인증 정보 만들기 > OAuth 클라이언트 ID
+  - 애플리케이션 유형: 웹 애플리케이션
+  - 이름: 지디컴
+  - 승인된 JavaScript 원본 > URI 추가
+    + http://localhost:3000
+  - 승인된 리디렉션 URI
+    + http://localhost:3000/api/auth/callback/google
+
+## 코드 수정
+* .env에 client_id와 client_secret 추가
+```
+GOOGLE_CLIENT_ID=abc123
+GOOGLE_CLIENT_SECRET=123ddd
+```
+
+* src/auth.ts에 추가
+```ts
+import GoogleProvider from "next-auth/providers/google";
+...
+providers: [ 
+  GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  }),
+  ...
+]
+```
+
+* src/data/actions/authAction.ts에 추가
+```ts
+export async function signInWithGoogle(){
+  await signIn('google', { redirectTo: '/' });
+}
+```
+
+* src/app/(community)/(user)/login/page.tsx에 추가
+```tsx
+import { signInWithCredentials, signInWithGoogle } from "@/data/actions/authAction";
+...
+<Submit formAction={signInWithCredentials}>로그인</Submit>
+<Submit formAction={signInWithGoogle}>구글</Submit>
+```
+
+* next.config.mjs에 추가
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      ...
+      {
+        protocol: 'https',
+        hostname: '*.googleusercontent.com',
+        pathname: '**',
+      },
+    ],
+  },
+};
+```
+
+# 깃허브 로그인
+* <https://next-auth.js.org/providers/github> 참고
+
+## 키발급
+### 깃허브 개발자 설정으로 이동
+* https://github.com/settings/developers
+
+* New OAuth App
+  - Application name: 지디컴
+  - Homepage URL: http://localhost:3000
+  - Authorization callback URL: http://localhost:3000/api/auth/callback/github
+  - Register application
+
+## 코드 수정
+* .env에 client_id와 client_secret 추가
+```
+GITHUB_CLIENT_ID=aaabb12
+GITHUB_CLIENT_SECRET=033a8ef1eadf
+```
+
+* src/auth.ts에 추가
+```ts
+import GithubProvider from "next-auth/providers/github";
+...
+providers: [ 
+  GithubProvider({
+    clientId: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  }),
+  ...
+]
+```
+
+* src/data/actions/authAction.ts에 추가
+```ts
+export async function signInWithGoogle(){
+  await signIn('github', { redirectTo: '/' });
+}
+```
+
+* src/app/(community)/(user)/login/page.tsx에 추가
+```tsx
+import { signInWithCredentials, signInWithGoogle } from "@/data/actions/authAction";
+...
+<Submit formAction={signInWithCredentials}>로그인</Submit>
+<Submit formAction={signInWithGoogle}>구글</Submit>
+```
+
+* next.config.mjs에 추가
+```js
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      ...
+      {
+        protocol: 'https',
+        hostname: '*.githubusercontent.com',
+        pathname: '**',
+      },
+    ],
+  },
+};
+```
