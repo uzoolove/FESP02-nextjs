@@ -69,10 +69,12 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
       console.log('jwt.user', user);
       // 토큰 만료 체크, refreshToken으로 accessToken 갱신
       // refreshToken도 만료되었을 경우 로그아웃 처리
-      if(user?.accessToken){
+      if (user) {
+        token.id = user.id;
+        token.type = user.type;
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
-      }      
+      }  
       return token;
     },
 
@@ -80,6 +82,8 @@ export const { handlers, signIn, signOut, auth} = NextAuth({
     // token 객체 정보로 session 객체 설정
     async session({ session, token }){
       console.log('session.user', session.user);
+      session.user.id = token.id as string;
+      session.user.type = token.type as string;
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
       return session;
