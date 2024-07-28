@@ -2058,10 +2058,10 @@ GOOGLE_CLIENT_SECRET=123ddd
 
 * src/auth.ts에 추가
 ```ts
-import GoogleProvider from "next-auth/providers/google";
+import google from "next-auth/providers/google";
 ...
 providers: [ 
-  GoogleProvider({
+  google({
     clientId: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   }),
@@ -2123,10 +2123,10 @@ GITHUB_CLIENT_SECRET=033a8ef1eadf
 
 * src/auth.ts에 추가
 ```ts
-import GithubProvider from "next-auth/providers/github";
+import github from "next-auth/providers/github";
 ...
 providers: [ 
-  GithubProvider({
+  github({
     clientId: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
   }),
@@ -2136,17 +2136,17 @@ providers: [
 
 * src/data/actions/authAction.ts에 추가
 ```ts
-export async function signInWithGoogle(){
+export async function signInWithGithub(){
   await signIn('github', { redirectTo: '/' });
 }
 ```
 
 * src/app/(community)/(user)/login/page.tsx에 추가
 ```tsx
-import { signInWithCredentials, signInWithGoogle } from "@/data/actions/authAction";
+import { signInWithCredentials, signInWithGithub } from "@/data/actions/authAction";
 ...
 <Submit formAction={signInWithCredentials}>로그인</Submit>
-<Submit formAction={signInWithGoogle}>구글</Submit>
+<Submit formAction={signInWithGithub}>깃허브</Submit>
 ```
 
 * next.config.mjs에 추가
