@@ -1,47 +1,46 @@
 // 서버 액션 정의
 'use server';
 
-import { ApiResWithValidation, SingleItem, UserData, UserForm } from "@/types";
+import { ApiResWithValidation, FileRes, MultiItem, SingleItem, UserData, UserForm } from "@/types";
 
 const SERVER = process.env.NEXT_PUBLIC_API_SERVER;
 
-type LoginForm = {
-  email: string,
-  password: string,
-};
-
-export async function signup(formData: UserForm){
-  // 이미지 업로드
-  if(formData.attach !== undefined && formData.attach.length > 0){
-    const body = new FormData();
-    body.append('attach', formData.attach[0]);
-    const fileRes = await fetch(`${SERVER}/files`, {
-      method: 'POST',
-      body
-    });
-
-    const resJson = await fileRes.json();
-
-    if(!resJson.ok){
-      throw new Error('파일 업로드 실패.');
-    }
-
-    formData.profileImage = resJson.item[0].path;
+export async function signup(formData: FormData): Promise<ApiResWithValidation<SingleItem<UserData>, UserForm>> {
+  const userData = {
+    type: formData.get('type') || 'user',
+    name: formData.get('name'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+    profileImage: '',
   }
 
-  // 회원 가입
-  formData.type = 'user';
-  delete formData.attach;
+  // 이미지 먼저 업로드
+  const attach = formData.get('attach') as File;
+
+  if (attach.size > 0) {
+    // 프로필 이미지를 추가한 경우
+    const fileRes = await fetch(`${SERVER}/files`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if(!fileRes.ok){
+      throw new Error('파일 업로드 실패');
+    }
+    const fileData: MultiItem<FileRes> = await fileRes.json();
+    // 서버로부터 응답받은 이미지 이름을 회원 정보에 포함
+    userData.profileImage = fileData.item[0].path;
+  } 
 
   const res = await fetch(`${SERVER}/users`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(formData)
+    body: JSON.stringify(userData)
   });
 
-  const resData: ApiResWithValidation<SingleItem<UserData>, UserForm> = await res.json();
-
-  return resData;
+  const data = await res.json();
+  console.log('data', data);
+  return data;
 }

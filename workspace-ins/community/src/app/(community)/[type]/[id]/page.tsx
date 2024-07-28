@@ -3,8 +3,9 @@ import { Metadata } from "next";
 import Link from "next/link";
 import CommentList from "./CommentList";
 import { fetchPost } from "@/data/fetch/postFetch";
-import model from "@/data/fetch/model";
 import { notFound } from "next/navigation";
+import { auth } from "@/auth";
+
 
 export async function generateMetadata({ params }: { params: { type: string, id: string } }): Promise<Metadata> {
   const boardName = params.type;
@@ -30,6 +31,7 @@ export async function generateStaticParams(){
 
 export default async function Page({ params }: { params: { type: string, id: string } }) {
   // const item = await model.post.detail(Number(params.id));
+  const session = await auth();
   const item = await fetchPost(params.id);
   if(item === null) notFound();
 
@@ -48,8 +50,13 @@ export default async function Page({ params }: { params: { type: string, id: str
           </div>
           <div className="flex justify-end my-4">
             <Link href={`/${params.type}`} className="bg-orange-500 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">목록</Link>
-            <Link href={`/${params.type}/${params.id}/edit`} className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">수정</Link>
-            <Submit bgColor="red">삭제</Submit>
+            { (session?.user?.id === String(item.user?._id)) && 
+              <>
+                <Link href={`/${params.type}/${params.id}/edit`} className="bg-gray-900 py-1 px-4 text-base text-white font-semibold ml-2 hover:bg-amber-400 rounded">수정</Link>
+                <Submit bgColor="red">삭제</Submit>
+              </>
+            }
+            
           </div>
         </form>
       </section>

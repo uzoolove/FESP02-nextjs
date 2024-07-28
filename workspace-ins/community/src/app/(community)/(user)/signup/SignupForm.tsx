@@ -15,17 +15,18 @@ export default function SignupForm() {
 
   const addUser = async (formData: UserForm) => {
     
-    // const userData = new FormData();
-    // Object.entries(formData).forEach(([key, value]) => {
-    //   if(key !== 'attach'){
-    //     userData.append(key, value as string);
-    //   }      
-    // });
-    // userData.append('attach', formData.attach as File);
+    const userData = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      console.log(key, value);
+      if(key !== 'attach'){
+        userData.append(key, value as string);
+      }
+    });
+    if(formData.attach){
+      userData.append('attach', formData.attach[0]);
+    }
 
-    // formData.type = 'user';
-
-    const resData = await signup(formData);
+    const resData = await signup(userData);
     if(resData.ok){
       alert(`${resData.item.name}님 회원가입을 환영합니다.`);
       router.push('/');
