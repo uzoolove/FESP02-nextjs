@@ -32,7 +32,7 @@ npm run build
 
 ### 서버 구동
 ```sh
-npm run start
+npm start
 ```
 
 ### 테스트
