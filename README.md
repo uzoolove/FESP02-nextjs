@@ -559,7 +559,7 @@ npm run dev
   </Suspense>
   ```
 
-* app/posts/paage.tsx 수정
+* app/posts/page.tsx 수정
   ```tsx
   export default async function Page(){
     await new Promise(resolve => setTimeout(resolve, 1000*3));
