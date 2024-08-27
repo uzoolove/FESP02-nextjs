@@ -552,7 +552,7 @@ npm run dev
   }
   ```
 
-* loading 파일과 같은 폴더에 있는 layout 파일에 page를 <Suspense>로 감싼 것처럼 동작
+* loading 파일과 같은 폴더에 있는 layout 파일에 page를 ```<Suspense>```로 감싼 것처럼 동작
   ```tsx
   <Suspense fallback={<Loading />}>
     { children }
@@ -571,21 +571,21 @@ npm run dev
 
 ### 서스펜스를 이용한 스트리밍
 * SSR을 사용하면 서버에서 페이지에 필요한 모든 데이터를 생성한 후 완성된 HTML을 전송하는데 까지 시간이 오래걸림
-* <Suspense>를 통해 스트리밍을 활성화하면 서버에서 레이아웃이나 중요 데이터를 먼저 전송할 수 있으며 클라이언트는 페이지의 일부를 더 빨리 표시할 수 있음
+* ```<Suspense>```를 통해 스트리밍을 활성화하면 서버에서 레이아웃이나 중요 데이터를 먼저 전송할 수 있으며 클라이언트는 페이지의 일부를 더 빨리 표시할 수 있음
   - 하나의 response로 나머지 데이터도 이어서 받음
 
 ### SEO
 * generateMetadata 함수는 페이지의 메타데이터를 생성하는 데 사용됨
-* 메타데이터는 주로 <head> 태그 내에 포함되는 title, description, keyword 등의 정보
+* 메타데이터는 주로 ```<head>``` 태그 내에 포함되는 title, description, keyword 등의 정보
 * 메타데이터는 SEO(검색 엔진 최적화)에 중요한 역할을 하며, 소셜 미디어 공유 시에도 사용됨
 * generateMetadata 함수 내에서 데이터를 fetching하는 경우, Next.js는 이 데이터 fetching이 완료될 때까지 기다림
-* 데이터 fetching이 완료된 후 메타데이터를 최종적으로 생성하고, 이 메타데이터를 포함한 <head> 태그를 클라이언트로 스트리밍하기 시작
-* 클라이언트는 서버로부터 받은 초기 컨텐츠가 <head>를 포함하고 있기 때문에 검색엔진이 자바스크립트를 실행하지 않아도 완전한 메타데이터 확인 가능
+* 데이터 fetching이 완료된 후 메타데이터를 최종적으로 생성하고, 이 메타데이터를 포함한 ```<head>``` 태그를 클라이언트로 스트리밍하기 시작
+* 클라이언트는 서버로부터 받은 초기 컨텐츠가 ```<head>```를 포함하고 있기 때문에 검색엔진이 자바스크립트를 실행하지 않아도 완전한 메타데이터 확인 가능
 
 ## 4.7 오류 처리
 * 오류가 발생할 경우 error.js 파일에서 오류 처리
   - 클라이언트 컴포넌트여야 함
-* error 파일과 같은 폴더에 있는 layout 파일에 page를 <ErrorBoundary>로 감싼 것처럼 동작
+* error 파일과 같은 폴더에 있는 layout 파일에 page를 ```<ErrorBoundary>```로 감싼 것처럼 동작
   ```tsx
   <ErrorBoundary fallback={<Error />}>
     { children }
@@ -1026,7 +1026,7 @@ export function GET(request: NextRequest) {
   ```
 
 * pending 상태를 표시하려면 리액트의 useFormStatus 훅 사용
-  - <form> 요소의 자식으로 정의
+  - ```<form>``` 요소의 자식으로 정의
   - 리액트 훅이므로 클라이언트 컴포넌트에서만 사용 가능
   ```tsx
   'use client'  
@@ -1206,7 +1206,7 @@ export default function LikeButton({ initialLikes }: { initialLikes: number }) {
   ```
 
 ### 에러 처리
-* 에러가 발생하면 가까운 error.js나 <Suspense> 에서 처리됨
+* 에러가 발생하면 가까운 error.js나 ```<Suspense>``` 에서 처리됨
 * try/catch로 에러 처리를 권장
   ```tsx
   'use server'
@@ -1311,7 +1311,7 @@ export default function LikeButton({ initialLikes }: { initialLikes: number }) {
 ### 순차적 fetch
 * 이전 fetch 작업 후 다음 fetch 작업을 하기 때문에 폭포수 현상 발생
 * 다음 데이터를 가져올 때 이전 데이터가 필요한 경우 사용(성능 저하)
-* loading 페이지나 <Suspense>를 사용해서 데이터 스트리밍 중에 로딩중 상태를 보여주면 전체가 블로킹 되는 문제를 막을 수 있음
+* loading 페이지나 ```<Suspense>```를 사용해서 데이터 스트리밍 중에 로딩중 상태를 보여주면 전체가 블로킹 되는 문제를 막을 수 있음
   - 사용자는 이미 로딩된 컨텐츠에 대해서는 인터렉션이 가능
   ```tsx
   // ...
