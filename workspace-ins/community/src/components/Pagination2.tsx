@@ -19,7 +19,6 @@ const Pagination: React.FC<PaginationProps> = ({ page, totalPages }) => {
     newSearchParams.set('page', String(i));
     const search = newSearchParams.toString();
 
-    console.log(page, i, page===i);
     pageList.push(
       <li
         key={i}
